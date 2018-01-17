@@ -101,16 +101,16 @@ private:
 	virtual void changeMarkerControlAndPose(std::string marker_name,bool set_control);
 
     //! Define a server for the Interactive Markers.
-    boost::shared_ptr<interactive_markers::InteractiveMarkerServer> server;
-	interactive_markers::MenuHandler menu_handler;
+    boost::shared_ptr<interactive_markers::InteractiveMarkerServer> server_;
+	interactive_markers::MenuHandler menu_handler_;
 
     //! Vector for storing all the User Entered Way-Points.
-	std::vector<tf::Transform> waypoints_pos;
+	std::vector<tf::Transform> waypoints_pos_;
 	//! The position of the User handlable Interactive Marker.
-	tf::Transform box_pos;
+	tf::Transform box_pos_;
 
     //! Variable for storing the count of the Way-Points.
-	int count;
+	int count_;
     //! Target Frame for the Transformation.
     std::string target_frame_;
 
@@ -119,6 +119,7 @@ protected Q_SLOTS:
 	virtual void load(const rviz::Config& config);
 	//! rviz::Panel virtual functions for saving Panel Configuration.
 	virtual void save(rviz::Config config) const;
+
 public Q_SLOTS:
 	//! Slot for handling the event of way-point deletion.
 	virtual void pointDeleted(std::string marker_name);
@@ -156,22 +157,23 @@ protected:
 	//! The class that GUI RQT User Interactions.
     QWidget *widget_;
     //! The Object for the MoveIt components.
-    QObject *path_generate;
-		//! The Object for setting Cartesian path parameters
-		QObject *set_cart_path_params;
-		//! The Object for setting Cartesian Force control parameters
-		QObject *set_cart_ft_params;
+    QObject *path_generate_;
+	//! The Object for setting Cartesian path parameters
+	QObject *set_cart_path_params_;
+	//! The Object for setting Cartesian Force control parameters
+	QObject *set_cart_ft_params_;
+
 private:
 	//! Define constants for color, arrow size, etc.
-	std_msgs::ColorRGBA WAY_POINT_COLOR;
-	std_msgs::ColorRGBA WAY_POINT_COLOR_OUTSIDE_IK;
-	std_msgs::ColorRGBA ARROW_INTER_COLOR;
+	std_msgs::ColorRGBA WAY_POINT_COLOR_;
+	std_msgs::ColorRGBA WAY_POINT_COLOR_OUTSIDE_IK_;
+	std_msgs::ColorRGBA ARROW_INTER_COLOR_;
 
-	geometry_msgs::Vector3 WAY_POINT_SCALE_CONTROL;
-	geometry_msgs::Vector3 ARROW_INTER_SCALE_CONTROL;
+	geometry_msgs::Vector3 WAY_POINT_SCALE_CONTROL_;
+	geometry_msgs::Vector3 ARROW_INTER_SCALE_CONTROL_;
 
-	float INTERACTIVE_MARKER_SCALE;
-	float ARROW_INTERACTIVE_SCALE;
+	float INTERACTIVE_MARKER_SCALE_;
+	float ARROW_INTERACTIVE_SCALE_;
 };
 } //end of namespace moveit_cartesian_plan_plugin
 

@@ -4,6 +4,7 @@
 #include <tf/transform_datatypes.h>
 #include <ros/ros.h>
 #include <geometry_msgs/Pose.h>
+#include <sensor_msgs/JointState.h>
 #include <tf/tf.h>
 #include <tf/LinearMath/Matrix3x3.h>
 #include <Eigen/Geometry>
@@ -50,15 +51,17 @@ namespace moveit_cartesian_plan_plugin
 {
 	namespace widgets {
 
-/*!
- *  \brief     Class for handling the User Interactions with the RQT Widget.
- *  \details   The PathPlanningWidget Class handles all User Interactions with the RQT GUI.
- 	 		   This Class inherits from the QWidget superclass.
- 	 		   The concept of the RQT widget is to add the same possabilities as the UI from the RViz enviroment and enabling simultanious communication betweet the RViz Enviroment and the RQT GUI.
-				 The updated plugin also allows Impedance/Force Control parameters to be set via the Qt UI of the plugin.
-				 Of course you need to make sure that you have implemented this in the particular robot driver.
- *  \author    Risto Kojcev
- */
+		/*!
+		 *  \brief     Class for handling the User Interactions with the RQT Widget.
+		 *  \details   The PathPlanningWidget Class handles all User Interactions with the RQT GUI.
+					   This Class inherits from the QWidget superclass.
+					   The concept of the RQT widget is to add the same possabilities as the UI from the RViz enviroment
+					   and enabling simultanious communication betweet the RViz Enviroment and the RQT GUI.
+						 The updated plugin also allows Impedance/Force Control parameters to be set via the Qt UI of
+						 the plugin.
+						 Of course you need to make sure that you have implemented this in the particular robot driver.
+		 *  \author    Risto Kojcev
+		 */
 
 		class PathPlanningWidget: public QWidget
 		{
@@ -81,14 +84,16 @@ namespace moveit_cartesian_plan_plugin
 			Ui::PathPlanningWidget ui_;
 			//! Definition of an abstract data model.
 			QStandardItemModel* pointDataModel;
+
 		private:
 			QStringList pointList;
 			//! Checks the range of the points.
 			void pointRange();
+
 		protected Q_SLOTS:
 			//! Initialize the TreeView with the User Interactive Marker.
-		  void initTreeView();
-		  //! Handle the event of a Way-Point deleted from the RQT UI.
+			void initTreeView();
+			//! Handle the event of a Way-Point deleted from the RQT UI.
 			void pointDeletedUI();
 			//! Handle the event of a Way-Point added from the RQT UI.
 			void pointAddUI();
@@ -112,6 +117,7 @@ namespace moveit_cartesian_plan_plugin
 			void clearAllPoints_slot();
 			//! Set the start pose of the User Interactive Marker to correspond to the loaded robot base frame.
 			void setAddPointUIStartPos(const std::string robot_model_frame,const tf::Transform end_effector);
+			void updateCurrentPositionDisplay(const std::string, const tf::Transform end_effector);
 			//! Slot for disabling the TabWidged while Cartesian Path is executed.
 			void cartesianPathStartedHandler();
 			//! Slot for enabling the TabWidged after Cartesian Path is executed.
@@ -139,6 +145,8 @@ namespace moveit_cartesian_plan_plugin
 
 			//! Check if the user wants to have F/T control from the UI
 			void withFTControl(int state);
+
+			void on_copyCurrentPoseButton_clicked();
 		Q_SIGNALS:
 			//! Notify RViz enviroment that a new Way-Point has been added from RQT.
 		    void addPoint( const tf::Transform point_pos );
@@ -150,20 +158,21 @@ namespace moveit_cartesian_plan_plugin
 		    void parseWayPointBtn_signal();
 		    //! Save to file button has been pressed.
 		    void saveToFileBtn_press();
+			//! Copy current pose button has been pressed.
+			void copyCurrentPoseButton_press();
 		    //! Signal that clear all points button has been pressed.
 		    void clearAllPoints_signal();
 		    //! Signal that the Cartesian Plan execution button has been pressed.
 		    void cartesianPathParamsFromUI_signal(double plan_time_,double cart_step_size_, double cart_jump_thresh_, bool moveit_replan_,bool avoid_collisions_);
 
-		    //! On this signal we will call the function for which will exectute the MoveIt command to bring the robot in its initial state.
+		    //! On this signal we will call the function for which will execute the MoveIt command to bring the robot in its initial state.
 		    void moveToHomeFromUI_signal();
 
-				void sendSendSelectedPlanGroup(int index);
-				//signaling the Qt that the Impedance params have changed via the UI
-				void setCartesianImpedanceParamsUI_signal(cartesian_impedance_msgs::SetCartesianImpedancePtr cart_impedance_params);
-				//signaling the Qt that the Force params have changed via the UI
-				void setCartesianFTParamsUI_signal(cartesian_impedance_msgs::SetCartesianForceCtrlPtr cart_ft_params);
-
+			void sendSendSelectedPlanGroup(int index);
+			//signaling the Qt that the Impedance params have changed via the UI
+			void setCartesianImpedanceParamsUI_signal(cartesian_impedance_msgs::SetCartesianImpedancePtr cart_impedance_params);
+			//signaling the Qt that the Force params have changed via the UI
+			void setCartesianFTParamsUI_signal(cartesian_impedance_msgs::SetCartesianForceCtrlPtr cart_ft_params);
 		};
 	}
 

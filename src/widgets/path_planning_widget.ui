@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>387</width>
-    <height>681</height>
+    <width>424</width>
+    <height>708</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,7 +24,7 @@
      </property>
      <widget class="QWidget" name="tab_MakePlan">
       <attribute name="title">
-       <string>Make Plan</string>
+       <string>Create Path</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_7">
        <item>
@@ -42,26 +42,36 @@
          <property name="uniformRowHeights">
           <bool>true</bool>
          </property>
+         <attribute name="headerDefaultSectionSize">
+          <number>100</number>
+         </attribute>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="moveToWaypointButton">
+         <property name="text">
+          <string>Move to selected Point</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_31">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Add New Way-Point</string>
+         </property>
         </widget>
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_11">
-           <item>
-            <widget class="QLabel" name="label_31">
-             <property name="font">
-              <font>
-               <pointsize>11</pointsize>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Add New Way-Point</string>
-             </property>
-            </widget>
-           </item>
            <item>
             <widget class="QLabel" name="label_2">
              <property name="text">
@@ -71,87 +81,108 @@
            </item>
            <item>
             <layout class="QGridLayout" name="gridLayout_4">
-             <item row="2" column="0">
-              <widget class="QLabel" name="yLabel">
-               <property name="text">
-                <string>Y (m)</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QLineEdit" name="LineEditY">
-               <property name="styleSheet">
-                <string notr="true"/>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QLineEdit" name="LineEditX">
-               <property name="styleSheet">
-                <string notr="true"/>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="0">
+             <item row="4" column="0">
               <widget class="QLabel" name="ryLabel">
                <property name="text">
                 <string>Ry (deg)</string>
                </property>
               </widget>
              </item>
-             <item row="5" column="1">
-              <widget class="QLineEdit" name="LineEditRy">
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="LineEditX">
                <property name="styleSheet">
                 <string notr="true"/>
                </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="zLabel">
                <property name="text">
-                <string>Z (m)</string>
+                <string/>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
-             <item row="3" column="1">
-              <widget class="QLineEdit" name="LineEditZ">
-               <property name="styleSheet">
-                <string notr="true"/>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="0">
-              <widget class="QLabel" name="rxLabel">
-               <property name="text">
-                <string>Rx (deg)</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
+             <item row="0" column="0">
               <widget class="QLabel" name="xLabel">
                <property name="text">
                 <string>X (m)</string>
                </property>
               </widget>
              </item>
-             <item row="4" column="1">
-              <widget class="QLineEdit" name="LineEditRx">
-               <property name="styleSheet">
-                <string notr="true"/>
+             <item row="5" column="0">
+              <widget class="QLabel" name="rzLabel">
+               <property name="text">
+                <string>Rz (deg)</string>
                </property>
               </widget>
              </item>
-             <item row="6" column="1">
+             <item row="5" column="1">
               <widget class="QLineEdit" name="LineEditRz">
                <property name="styleSheet">
                 <string notr="true"/>
                </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
               </widget>
              </item>
-             <item row="6" column="0">
-              <widget class="QLabel" name="rzLabel">
+             <item row="2" column="1">
+              <widget class="QLineEdit" name="LineEditZ">
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="rxLabel">
                <property name="text">
-                <string>Rz (deg)</string>
+                <string>Rx (deg)</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="zLabel">
+               <property name="text">
+                <string>Z (m)</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLineEdit" name="LineEditY">
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QLineEdit" name="LineEditRx">
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QLineEdit" name="LineEditRy">
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="yLabel">
+               <property name="text">
+                <string>Y (m)</string>
                </property>
               </widget>
              </item>
@@ -167,12 +198,204 @@
           </layout>
          </item>
          <item>
-          <widget class="Line" name="line_2">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-          </widget>
+          <layout class="QVBoxLayout" name="verticalLayout_13">
+           <item>
+            <spacer name="verticalSpacer_7">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="copyCurrentPoseButton">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>20</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>24</width>
+               <height>100</height>
+              </size>
+             </property>
+             <property name="baseSize">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>◁</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_4">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
          </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_12">
+           <item>
+            <widget class="QLabel" name="label_35">
+             <property name="text">
+              <string>Current Position</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QGridLayout" name="gridLayout_5">
+             <item row="1" column="0">
+              <widget class="QLabel" name="labelX">
+               <property name="text">
+                <string>X (m)</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QLineEdit" name="currentPoseRx">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QLineEdit" name="currentPoseZ">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="1">
+              <widget class="QLineEdit" name="currentPoseRy">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="labelY">
+               <property name="text">
+                <string>Y (m)</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QLineEdit" name="currentPoseY">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLineEdit" name="currentPoseX">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="1">
+              <widget class="QLineEdit" name="currentPoseRz">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="labelZ">
+               <property name="text">
+                <string>Z(m)</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="labelRx">
+               <property name="text">
+                <string>Rx (deg)</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="0">
+              <widget class="QLabel" name="labelRy">
+               <property name="text">
+                <string>Ry (deg)</string>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="0">
+              <widget class="QLabel" name="labelRz">
+               <property name="text">
+                <string>Rz (deg)</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QPushButton" name="addCurrentPositionbPointButton">
+             <property name="text">
+              <string>Add Point</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="Line" name="line">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <property name="margin">
@@ -209,12 +432,29 @@
             </spacer>
            </item>
            <item>
-            <widget class="Line" name="line">
+            <spacer name="horizontalSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
-            </widget>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
            </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="Line" name="line_3">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
             <widget class="QLabel" name="label_3">
              <property name="font">
@@ -291,13 +531,6 @@
         </spacer>
        </item>
       </layout>
-      <zorder>treeView</zorder>
-      <zorder>btn_LoadPath</zorder>
-      <zorder>btn_SavePath</zorder>
-      <zorder>btn_ClearAllPoints</zorder>
-      <zorder>label</zorder>
-      <zorder>horizontalLayoutWidget_2</zorder>
-      <zorder>verticalSpacer_3</zorder>
      </widget>
      <widget class="QWidget" name="tab_SetImpedance">
       <attribute name="title">
@@ -327,12 +560,18 @@
            <property name="text">
             <string>0.7</string>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
           </widget>
          </item>
          <item row="10" column="2">
           <widget class="QLineEdit" name="txt_MaxCtrlForce_X">
            <property name="text">
             <string>200</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -341,12 +580,18 @@
            <property name="text">
             <string>200</string>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
           </widget>
          </item>
          <item row="1" column="2">
           <widget class="QLineEdit" name="txt_Stiffness_X">
            <property name="text">
             <string>1000</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -355,6 +600,9 @@
            <property name="text">
             <string>0.3</string>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
           </widget>
          </item>
          <item row="10" column="3">
@@ -362,12 +610,18 @@
            <property name="text">
             <string>200</string>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
           </widget>
          </item>
          <item row="5" column="4">
           <widget class="QLineEdit" name="txt_Damping_RZ">
            <property name="text">
             <string>0.3</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -390,12 +644,18 @@
            <property name="text">
             <string>1000</string>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
           </widget>
          </item>
          <item row="10" column="4">
           <widget class="QLineEdit" name="txt_MaxCtrlForce_Z">
            <property name="text">
             <string>200</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -404,12 +664,18 @@
            <property name="text">
             <string>1000</string>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
           </widget>
          </item>
          <item row="5" column="2">
           <widget class="QLineEdit" name="txt_Damping_RX">
            <property name="text">
             <string>0.3</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -418,6 +684,9 @@
            <property name="text">
             <string>200</string>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
           </widget>
          </item>
          <item row="11" column="3">
@@ -425,12 +694,18 @@
            <property name="text">
             <string>200</string>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
           </widget>
          </item>
          <item row="8" column="2">
           <widget class="QLineEdit" name="txt_MaxVel_RX">
            <property name="text">
             <string>6.3</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -453,12 +728,18 @@
            <property name="text">
             <string>200</string>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
           </widget>
          </item>
          <item row="5" column="3">
           <widget class="QLineEdit" name="txt_Damping_RY">
            <property name="text">
             <string>0.3</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -467,6 +748,9 @@
            <property name="text">
             <string>1</string>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
           </widget>
          </item>
          <item row="2" column="4">
@@ -474,12 +758,18 @@
            <property name="text">
             <string>200</string>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
           </widget>
          </item>
          <item row="11" column="2">
           <widget class="QLineEdit" name="txt_MaxCtrlForce_RX">
            <property name="text">
             <string>200</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -494,6 +784,9 @@
           <widget class="QLineEdit" name="txt_MaxVel_RY">
            <property name="text">
             <string>6.3</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -523,12 +816,18 @@
            <property name="text">
             <string>0.3</string>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
           </widget>
          </item>
          <item row="8" column="4">
           <widget class="QLineEdit" name="txt_MaxVel_RZ">
            <property name="text">
             <string>6.3</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -565,6 +864,9 @@
            <property name="text">
             <string>0.3</string>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
           </widget>
          </item>
          <item row="4" column="0">
@@ -579,12 +881,18 @@
            <property name="text">
             <string>1</string>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
           </widget>
          </item>
          <item row="7" column="3">
           <widget class="QLineEdit" name="txt_MaxVel_Y">
            <property name="text">
             <string>1</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -615,6 +923,9 @@
            <property name="text">
             <string>5</string>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
           </widget>
          </item>
          <item row="13" column="0">
@@ -643,6 +954,9 @@
            <property name="text">
             <string>1</string>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
           </widget>
          </item>
          <item row="13" column="3">
@@ -650,12 +964,18 @@
            <property name="text">
             <string>5</string>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
           </widget>
          </item>
          <item row="16" column="2">
           <widget class="QLineEdit" name="txt_NullSpace_Stiffness">
            <property name="text">
             <string>100</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -685,6 +1005,9 @@
            <property name="text">
             <string>5</string>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
           </widget>
          </item>
          <item row="12" column="4">
@@ -692,12 +1015,18 @@
            <property name="text">
             <string>1</string>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
           </widget>
          </item>
          <item row="12" column="3">
           <widget class="QLineEdit" name="txt_MaxPathDev_Y">
            <property name="text">
             <string>1</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -740,7 +1069,7 @@
      </widget>
      <widget class="QWidget" name="tab_ExecutePlan">
       <attribute name="title">
-       <string>Execute Plan</string>
+       <string>Execute Path</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_6">
        <item>
@@ -753,7 +1082,11 @@
           </widget>
          </item>
          <item row="0" column="2">
-          <widget class="QLineEdit" name="lnEdit_PlanTime"/>
+          <widget class="QLineEdit" name="lnEdit_PlanTime">
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
          </item>
          <item row="1" column="2">
           <widget class="QCheckBox" name="chk_AllowReplanning">
@@ -814,6 +1147,9 @@
               <property name="styleSheet">
                <string notr="true"/>
               </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
              </widget>
             </item>
             <item row="2" column="2">
@@ -843,6 +1179,9 @@
               </property>
               <property name="text">
                <string/>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
@@ -917,12 +1256,18 @@
               <property name="text">
                <string>1000</string>
               </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
              </widget>
             </item>
             <item row="3" column="2">
              <widget class="QLineEdit" name="txt_FTValue">
               <property name="text">
                <string>5</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
@@ -1056,18 +1401,9 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>tabWidget</tabstop>
-  <tabstop>treeView</tabstop>
   <tabstop>LineEditX</tabstop>
-  <tabstop>LineEditY</tabstop>
-  <tabstop>LineEditZ</tabstop>
-  <tabstop>LineEditRx</tabstop>
-  <tabstop>LineEditRy</tabstop>
-  <tabstop>LineEditRz</tabstop>
   <tabstop>btnAddPoint</tabstop>
   <tabstop>combo_planGroup</tabstop>
-  <tabstop>txtPointName</tabstop>
-  <tabstop>btnRemovePoint</tabstop>
   <tabstop>btn_ClearAllPoints</tabstop>
   <tabstop>btn_SavePath</tabstop>
   <tabstop>btn_LoadPath</tabstop>
