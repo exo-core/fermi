@@ -66,7 +66,7 @@ namespace moveit_cartesian_plan_plugin
 			ui_.combo_DOF_FT->addItem("Ry");
 			ui_.combo_DOF_FT->addItem("Rz");
 
-			connect(ui_.btnAddPoint,SIGNAL(clicked()),this,SLOT(pointAddUI()));
+			//connect(ui_.btnAddPoint,SIGNAL(clicked()),this,SLOT(on_btnAddPoint_clicked()));
 			connect(ui_.btnRemovePoint,SIGNAL(clicked()),this,SLOT(pointDeletedUI()));
 			connect(ui_.treeView->selectionModel(),SIGNAL(currentChanged(const QModelIndex& , const QModelIndex& )),this,SLOT(selectedPoint(const QModelIndex& , const QModelIndex&)));
 			connect(ui_.treeView->selectionModel(),SIGNAL(currentChanged(const QModelIndex& , const QModelIndex& )),this,SLOT(treeViewDataChanged(const QModelIndex& , const QModelIndex&)));
@@ -81,26 +81,26 @@ namespace moveit_cartesian_plan_plugin
 			connect(ui_.btn_SendCartParams,SIGNAL(clicked()),this,SLOT(setCartesianImpedanceParamsUI()));
 			connect(ui_.btn_setFT,SIGNAL(clicked()),this,SLOT(setCartesianFTParamsUI()));
 
-			//see if the user want to have cartesian impedance
+			// see if the user want to have cartesian impedance
 			connect(ui_.chk_CartImpedance , SIGNAL(stateChanged(int)),this,SLOT(withCartImpedanceStateChanged(int)));
-			//see if the user want to have cartesian impedance
+			// see if the user want to have cartesian impedance
 			connect(ui_.chk_EnableFT , SIGNAL(stateChanged(int)),this,SLOT(withFTControl(int)));
 
 			//see check the status of each checkbox for enabling F/T or Cartesian Impedance
-			if(ui_.chk_CartImpedance->isChecked())
+			if(ui_.chk_CartImpedance->isChecked()) {
 				ui_.group_Impedance->setEnabled(true);
-			else
+			}
+			else {
 				ui_.group_Impedance->setEnabled(true);
+			}
 
-			if(ui_.chk_EnableFT->isChecked())
-			{
+			if(ui_.chk_EnableFT->isChecked()) {
 				ui_.combo_DOF_FT->setEnabled(true);
 				ui_.txt_FTValue->setEnabled(true);
 				ui_.txt_FTStiffness->setEnabled(true);
 				ui_.btn_setFT->setEnabled(true);
 			}
-			else
-			{
+			else {
 				ui_.combo_DOF_FT->setEnabled(false);
 				ui_.txt_FTValue->setEnabled(false);
 				ui_.txt_FTStiffness->setEnabled(false);
@@ -219,7 +219,7 @@ namespace moveit_cartesian_plan_plugin
 				ui_.txtPointName->setText(QString::number(current.parent().parent().row()));
 		}
 
-		void PathPlanningWidget::pointAddUI()
+		void PathPlanningWidget::on_btnAddPoint_clicked()
 		{
 			/*! Function for adding new Way-Point from the RQT Widget.
 			The user can set the position and orientation of the Way-Point by entering their values in the LineEdit fields.
@@ -666,6 +666,7 @@ namespace moveit_cartesian_plan_plugin
 
 		void PathPlanningWidget::moveToHomeFromUI()
 		{
+			sendCartTrajectoryParamsFromUI();
 			Q_EMIT moveToHomeFromUI_signal();
 		}
 
@@ -753,6 +754,8 @@ namespace moveit_cartesian_plan_plugin
 		}
 
 		void PathPlanningWidget::on_moveToNewPositionButton_clicked() {
+			sendCartTrajectoryParamsFromUI();
+
 			double rx,ry,rz;
 			rx = DEG2RAD(ui_.LineEditRx->text().toDouble());
 			ry = DEG2RAD(ui_.LineEditRy->text().toDouble());

@@ -18,96 +18,96 @@
 
 GenerateCartesianPath::GenerateCartesianPath(QObject *parent)
 {
-    //to add initializations
-    init();
-
+	//to add initializations
+	init();
 }
+
 GenerateCartesianPath::~GenerateCartesianPath()
 {
-  /*! The destructor resets the moveit_group_ and the kinematic_state of the robot.
-  */
-  moveit_group_.reset();
-  kinematic_state_.reset();
-  robot_model_loader_.reset();
-  kmodel_.reset();
+	/*! The destructor resets the moveit_group_ and the kinematic_state of the robot.
+	*/
+	moveit_group_.reset();
+	kinematic_state_.reset();
+	robot_model_loader_.reset();
+	kmodel_.reset();
 }
 
 void GenerateCartesianPath::init()
 {
-    /*! Initialize the MoveIt parameters:
-    - MoveIt group
-    - Kinematic State is the current kinematic congiguration of the Robot
-    - Robot model which handles getting the Robot Model
-    - Joint Model group which are necessary for checking if Way-Point is outside the IK Solution
-    .
-    */
+	/*! Initialize the MoveIt parameters:
+	- MoveIt group
+	- Kinematic State is the current kinematic congiguration of the Robot
+	- Robot model which handles getting the Robot Model
+	- Joint Model group which are necessary for checking if Way-Point is outside the IK Solution
+	.
+	*/
 
-    selected_plan_group_ = 0;
-    robot_model_loader_ = RobotModelLoaderPtr(new robot_model_loader::RobotModelLoader("robot_description"));
-    kmodel_ = robot_model_loader_->getModel();
-    target_frame_ = "base_link";
+	selected_plan_group_ = 0;
+	robot_model_loader_ = RobotModelLoaderPtr(new robot_model_loader::RobotModelLoader("robot_description"));
+	kmodel_ = robot_model_loader_->getModel();
+	target_frame_ = "base_link";
 
-    end_eff_joint_groups_ = kmodel_->getEndEffectors();
+	end_eff_joint_groups_ = kmodel_->getEndEffectors();
 
 
-    ROS_INFO_STREAM("size of the end effectors is: "<<end_eff_joint_groups_.size());
+	ROS_INFO_STREAM("size of the end effectors is: "<<end_eff_joint_groups_.size());
 
-    if (end_eff_joint_groups_.empty()) {
-        std::vector< std::string > group_names_tmp_;
-        const moveit::core::JointModelGroup *  end_eff_joint_groups_tmp_;
-        group_names_tmp_ = kmodel_->getJointModelGroupNames();
+	if (end_eff_joint_groups_.empty()) {
+		std::vector< std::string > group_names_tmp_;
+		const moveit::core::JointModelGroup *  end_eff_joint_groups_tmp_;
+		group_names_tmp_ = kmodel_->getJointModelGroupNames();
 
-        for(int i=0;i<group_names_tmp_.size();i++) {
-            end_eff_joint_groups_tmp_ = kmodel_->getJointModelGroup(group_names_tmp_.at(i));
-            if(end_eff_joint_groups_tmp_->isChain()) {
-                group_names_.push_back(group_names_tmp_.at(i));
-            }
-            else {
-                ROS_WARN_STREAM("The group:" << end_eff_joint_groups_tmp_->getName() <<" is not a Chain. Depreciate it!!");
-            }
-        }
-    }
-    else {
-        for(int i=0;i<end_eff_joint_groups_.size();i++) {
-            if(end_eff_joint_groups_.at(i)->isChain()) {
-                const std::string& parent_group_name = end_eff_joint_groups_.at(i)->getName();
-                group_names_.push_back(parent_group_name);
+		for(int i=0;i<group_names_tmp_.size();i++) {
+			end_eff_joint_groups_tmp_ = kmodel_->getJointModelGroup(group_names_tmp_.at(i));
+			if(end_eff_joint_groups_tmp_->isChain()) {
+				group_names_.push_back(group_names_tmp_.at(i));
+			}
+			else {
+				ROS_WARN_STREAM("The group:" << end_eff_joint_groups_tmp_->getName() <<" is not a Chain. Depreciate it!!");
+			}
+		}
+	}
+	else {
+		for(int i=0;i<end_eff_joint_groups_.size();i++) {
+			if(end_eff_joint_groups_.at(i)->isChain()) {
+				const std::string& parent_group_name = end_eff_joint_groups_.at(i)->getName();
+				group_names_.push_back(parent_group_name);
 
-                ROS_INFO_STREAM("Group name:"<< group_names_.at(i));
-            }
-            else {
-                ROS_INFO_STREAM("This group is not a chain. Find the parent of the group");
-                const std::pair< std::string, std::string > & parent_group_name = end_eff_joint_groups_.at(i)->getEndEffectorParentGroup();
-                group_names_.push_back(parent_group_name.first);
-            }
-        }
-    }
+				ROS_INFO_STREAM("Group name:"<< group_names_.at(i));
+			}
+			else {
+				ROS_INFO_STREAM("This group is not a chain. Find the parent of the group");
+				const std::pair< std::string, std::string > & parent_group_name = end_eff_joint_groups_.at(i)->getEndEffectorParentGroup();
+				group_names_.push_back(parent_group_name.first);
+			}
+		}
+	}
 
-    ROS_INFO_STREAM("Group name:"<< group_names_[selected_plan_group_]);
+	ROS_INFO_STREAM("Group name:"<< group_names_[selected_plan_group_]);
 
-    moveit_group_ = MoveGroupPtr(new move_group_interface::MoveGroup(group_names_[selected_plan_group_]));
-    kinematic_state_ = moveit::core::RobotStatePtr(new robot_state::RobotState(kmodel_));
-    kinematic_state_->setToDefaultValues();
+	moveit_group_ = MoveGroupPtr(new move_group_interface::MoveGroup(group_names_[selected_plan_group_]));
+	kinematic_state_ = moveit::core::RobotStatePtr(new robot_state::RobotState(kmodel_));
+	kinematic_state_->setToDefaultValues();
 
-    joint_model_group_ = kmodel_->getJointModelGroup(group_names_[selected_plan_group_]);
+joint_model_group_ = kmodel_->getJointModelGroup(group_names_[selected_plan_group_]);
 }
 
-void GenerateCartesianPath::setCartParams(double plan_time_,double cart_step_size_, double cart_jump_thresh_, bool moveit_replan_,bool avoid_collisions_)
+void GenerateCartesianPath::setCartParams(double plan_time,double cart_step_size, double cart_jump_thresh, bool moveit_replan,bool avoid_collisions)
 {
-  /*! Set the necessary parameters for the MoveIt and the Cartesian Path Planning.
-      These parameters correspond to the ones that the user has entered or the default ones before the execution of the Cartesian Path Planner.
-  */
-  ROS_INFO_STREAM("MoveIt and Cartesian Path parameters from UI:\n MoveIt Plan Time:"<<plan_time_
-                  <<"\n Cartesian Path Step Size:"<<cart_step_size_
-                  <<"\n Jump Threshold:"<<cart_jump_thresh_
-                  <<"\n Replanning:"<<moveit_replan_
-                  <<"\n Avoid Collisions:"<<avoid_collisions_);
+	/*! Set the necessary parameters for the MoveIt and the Cartesian Path Planning.
+	  These parameters correspond to the ones that the user has entered or the default ones before the execution of the Cartesian Path Planner.
+	*/
+	ROS_INFO_STREAM("MoveIt and Cartesian Path parameters from UI:\n MoveIt Plan Time:"<<plan_time
+				  <<"\n Cartesian Path Step Size:"<<cart_step_size
+				  <<"\n Jump Threshold:"<<cart_jump_thresh
+				  <<"\n Replanning:"<<moveit_replan
+				  <<"\n Avoid Collisions:"<<avoid_collisions);
 
-  PLAN_TIME_        = plan_time_;
-  MOVEIT_REPLAN_    = moveit_replan_;
-  CART_STEP_SIZE_   = cart_step_size_;
-  CART_JUMP_THRESH_ = cart_jump_thresh_;
-  AVOID_COLLISIONS_ = avoid_collisions_;
+	PLAN_TIME_        = plan_time;
+	MOVEIT_REPLAN_    = moveit_replan;
+	CART_STEP_SIZE_   = cart_step_size;
+	CART_JUMP_THRESH_ = cart_jump_thresh;
+	AVOID_COLLISIONS_ = avoid_collisions;
 }
 
 void GenerateCartesianPath::moveToPoses(std::vector<geometry_msgs::Pose> waypoints)

@@ -96,7 +96,7 @@ namespace moveit_cartesian_plan_plugin
 			//! Handle the event of a Way-Point deleted from the RQT UI.
 			void pointDeletedUI();
 			//! Handle the event of a Way-Point added from the RQT UI.
-			void pointAddUI();
+			void on_btnAddPoint_clicked();
 			//! Insert a row in the TreeView.
 			void insertRow(const tf::Transform& point_pos,const int count);
 			//! Remove a row in the TreeView.
