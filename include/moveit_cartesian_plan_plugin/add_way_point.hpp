@@ -81,7 +81,7 @@ public:
 	virtual void processFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback );
 
     //! Make a new Interactive Marker Way-Point
-	virtual void makeArrow(const tf::Transform& point_pos,int count_arrow);
+	virtual void makeArrow(const tf::Transform& point_pos, const int count_arrow);
 	//! User Interaction Arrow Marker
 	virtual void makeInteractiveMarker();
 
@@ -122,7 +122,7 @@ protected Q_SLOTS:
 
 public Q_SLOTS:
 	//! Slot for handling the event of way-point deletion.
-	virtual void pointDeleted(std::string marker_name);
+	virtual void pointDeleted(int index);
 	//! Slot for handling the add way-point event from the RQT UI.
 	void addPointFromUI( const tf::Transform point_pos);
 	//! Slot for handling when the user updates the position of the Interactive Markers.

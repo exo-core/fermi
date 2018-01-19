@@ -34,7 +34,7 @@ namespace moveit_cartesian_plan_plugin
       */
 			ui_.setupUi(this);
 
-			ui_.txtPointName->setText("0");
+			selectedPoint_ = -1 ;
 			//set up the default values for the MoveIt and Cartesian Path
 			ui_.lnEdit_PlanTime->setText("5.0");
 			ui_.lnEdit_StepSize->setText("0.01");
@@ -52,7 +52,7 @@ namespace moveit_cartesian_plan_plugin
 
 			QStringList headers;
 			headers<<tr("Point")<<tr("Position (m)")<<tr("Orientation (deg)");
-			PointTreeModel *model = new PointTreeModel(headers,"add_point_button");
+			PointTreeModel *model = new PointTreeModel(headers,"");
 			ui_.treeView->setModel(model);
 			ui_.btn_LoadPath->setToolTip(tr("Load Way-Points from a file"));
 			ui_.btn_SavePath->setToolTip(tr("Save Way-Points to a file"));
@@ -67,7 +67,7 @@ namespace moveit_cartesian_plan_plugin
 			ui_.combo_DOF_FT->addItem("Rz");
 
 			//connect(ui_.btnAddPoint,SIGNAL(clicked()),this,SLOT(on_btnAddPoint_clicked()));
-			connect(ui_.btnRemovePoint,SIGNAL(clicked()),this,SLOT(pointDeletedUI()));
+			//connect(ui_.deleteWaypointButton,SIGNAL(clicked()),this,SLOT(pointDeletedUI()));
 			connect(ui_.treeView->selectionModel(),SIGNAL(currentChanged(const QModelIndex& , const QModelIndex& )),this,SLOT(selectedPoint(const QModelIndex& , const QModelIndex&)));
 			connect(ui_.treeView->selectionModel(),SIGNAL(currentChanged(const QModelIndex& , const QModelIndex& )),this,SLOT(treeViewDataChanged(const QModelIndex& , const QModelIndex&)));
 			connect(ui_.targetPoint,SIGNAL(clicked()),this,SLOT(sendCartTrajectoryParamsFromUI()));
@@ -180,17 +180,6 @@ namespace moveit_cartesian_plan_plugin
 
 		}
 
-		void PathPlanningWidget::pointRange()
-		{
-			/*! Get the current range of points from the TreeView.
-				This is essential for setting up the number of the item that should be run next.
-				Dealing with the data in the TreeView
-			*/
-			QAbstractItemModel *model=ui_.treeView->model();
-			int count = model->rowCount()-1;
-			ui_.txtPointName->setValidator(new QIntValidator(1,count,ui_.txtPointName));
-		}
-
 		void PathPlanningWidget::initTreeView()
 		{
 			/*! Initialize the Qt TreeView and set the initial value of the User Interaction arrow.
@@ -198,10 +187,7 @@ namespace moveit_cartesian_plan_plugin
 			*/
 			QAbstractItemModel *model=ui_.treeView->model();
 
-			model->setData(model->index(0,0,QModelIndex()),QVariant("add_point_button"),Qt::EditRole);
-
-			//update the validator for the lineEdit Point
-			pointRange();
+			//model->setData(model->index(0,0,QModelIndex()),QVariant("add_point_button"),Qt::EditRole);
 		}
 
 		void PathPlanningWidget::selectedPoint(const QModelIndex& current, const QModelIndex& previous)
@@ -209,14 +195,17 @@ namespace moveit_cartesian_plan_plugin
 			/*! Get the selected point from the TreeView.
 				This is used for updating the information of the lineEdit which informs gives the number of the currently selected Way-Point.
 			*/
-			ROS_INFO_STREAM("Selected Index Changed"<<current.row());
+			ROS_INFO_STREAM("Selected Index Changed: "<<current.row());
 
-			if(current.parent()==QModelIndex())
-				ui_.txtPointName->setText(QString::number(current.row()));
-			else if((current.parent()!=QModelIndex()) && (current.parent().parent() == QModelIndex()))
-				ui_.txtPointName->setText(QString::number(current.parent().row()));
-			else
-				ui_.txtPointName->setText(QString::number(current.parent().parent().row()));
+			if(current.parent() == QModelIndex()) {
+				selectedPoint_ = current.row();
+			}
+			else if((current.parent() != QModelIndex()) && (current.parent().parent() == QModelIndex())) {
+				selectedPoint_ = current.parent().row();
+			}
+			else {
+				selectedPoint_ = current.parent().parent().row() ;
+			}
 		}
 
 		void PathPlanningWidget::on_btnAddPoint_clicked()
@@ -236,8 +225,6 @@ namespace moveit_cartesian_plan_plugin
 			// // create transform
 			tf::Transform point_pos( tf::Transform(tf::createQuaternionFromRPY(rx,ry,rz),tf::Vector3(x,y,z)));
 			Q_EMIT addPoint(point_pos);
-
-			pointRange();
 		}
 
 		void PathPlanningWidget::on_addCurrentPositionPointButton_clicked() {
@@ -252,38 +239,37 @@ namespace moveit_cartesian_plan_plugin
 			// // create transform
 			tf::Transform point_pos( tf::Transform(tf::createQuaternionFromRPY(rx,ry,rz),tf::Vector3(x,y,z)));
 			Q_EMIT addPoint(point_pos);
-
-			pointRange();
 		}
 
-		void PathPlanningWidget::pointDeletedUI()
+		void PathPlanningWidget::on_deleteWaypointButton_clicked()
 		{
-			/*! Function for deleting a Way-Point from the RQT GUI.
-				The name of the Way-Point that needs to be deleted corresponds to the txtPointName line edit field.
-				This slot is connected to the Remove Point button signal. After completion of this function a signal is send to Inform the RViz enviroment that a Way-Point has been deleted from the RQT Widget.
-			*/
-			std::string marker_name;
-			QString qtPointNr = ui_.txtPointName->text();
-			marker_name = qtPointNr.toUtf8().constData();
+			/**
+			 * Function for deleting a Way-Point from the RQT GUI.
+			 * The name of the Way-Point that needs to be deleted corresponds to the selected_point_ member.
+			 * This slot is connected to the Remove Point button signal. After completion of this function a signal is
+			 * send to Inform the RViz enviroment that a Way-Point has been deleted from the RQT Widget.
+			 */
 
-			int marker_nr = atoi(marker_name.c_str());
+			ROS_INFO_STREAM("Deleting row "<<selectedPoint_<<" of "<<ui_.treeView->model()->rowCount());
 
-			if(strcmp(marker_name.c_str(),"0")!=0)
-			{
-				removeRow(marker_nr);
-				pointRange();
-				Q_EMIT pointDelUI_signal(marker_name.c_str());
+			if((0 <= selectedPoint_) && (selectedPoint_ < ui_.treeView->model()->rowCount())) {
+				Q_EMIT pointDeleteUI_signal(selectedPoint_);
+				selectedPoint_ = -1 ;
 			}
 		}
 
 		void PathPlanningWidget::insertRow(const tf::Transform& point_pos,const int count)
 		{
-			/*! Whenever we have a new Way-Point insereted either from the RViz or the RQT Widget the the TreeView needs to update the information and insert new row that corresponds to the new insered point.
-				This function takes care of parsing the data recieved from the RViz or the RQT widget and creating new row with the appropriate data format and Children. One for the position giving us the current position of the Way-Point in all the axis.
-				One child for the orientation giving us the Euler Angles of each axis.
-			*/
+			/**
+			 * Whenever we have a new Way-Point inserted either from the RViz or the RQT Widget the the TreeView needs
+			 * to update the information and insert new row that corresponds to the new insered point.
+			 * This function takes care of parsing the data receieved from the RViz or the RQT widget and creating new
+			 * row with the appropriate data format and Children. One for the position giving us the current position
+			 * of the Way-Point in all the axis.
+			 * One child for the orientation giving us the Euler Angles of each axis.
+			 */
 
-			ROS_INFO("inserting new row in the TreeView");
+			ROS_INFO_STREAM("inserting new row in the TreeView at pos "<<count);
 			QAbstractItemModel *model = ui_.treeView->model();
 
 			//convert the quartenion to roll pitch yaw angle
@@ -291,20 +277,22 @@ namespace moveit_cartesian_plan_plugin
 			tfScalar rx,ry,rz;
 			point_pos.getBasis().getRPY(rx,ry,rz,1);
 
-			if(count == 0)
-			{
-				model->insertRow(count,model->index(count, 0));
+			//int len = ui_.treeView->model()->rowCount() ;
 
-				model->setData(model->index(0,0,QModelIndex()),QVariant("add_point_button"),Qt::EditRole);
-				pointRange();
+			if (count <= 0) {
+				model->insertRow(count, QModelIndex());
 			}
-			else
-			{
+			else {
+				model->insertRow(count, model->index(count, 0));
+			}
 
-				if(!model->insertRow(count,model->index(count, 0)))  //&& count==0
+			//else
+			//{
+
+				/*if(!model->insertRow(count,model->index(count, 0)))  //&& count==0
 				{
 					return;
-				}
+				}*/
 
 				//set the strings of each axis of the position
 				QString pos_x = QString::number(p.x());
@@ -316,7 +304,7 @@ namespace moveit_cartesian_plan_plugin
 				QString orient_y = QString::number(RAD2DEG(ry));
 				QString orient_z = QString::number(RAD2DEG(rz));
 
-				model->setData(model->index(count,0),QVariant(count),Qt::EditRole);
+				model->setData(model->index(count,0),QVariant (count),Qt::EditRole);
 
 				// add a child to the last inserted item. First add children in the treeview that
 				// are just telling the user that if he expands them he can see details about the position and
@@ -356,35 +344,32 @@ namespace moveit_cartesian_plan_plugin
 				model->setData(model->index(1, 2, chldind_orient), QVariant(orient_y), Qt::EditRole);
 				model->setData(model->index(2, 2, chldind_orient), QVariant(orient_z), Qt::EditRole);
 				//******************************************************************************************************
-				pointRange();
-			}
-
+			//}
 		}
 
-		void PathPlanningWidget::removeRow(int marker_nr)
+		void PathPlanningWidget::removeRow(int index)
 		{
 			/*! When the user deletes certain Way-Point either from the RViz or the RQT Widget the TreeView needs to
 			 *  delete that particular row and update the state of the TreeWidget.
 			*/
 			QAbstractItemModel *model = ui_.treeView->model();
 
-			model->removeRow(marker_nr,QModelIndex());
-			ROS_INFO_STREAM("deleting point nr: "<< marker_nr);
+			model->removeRow(index,QModelIndex());
+			ROS_INFO_STREAM("deleting point at index: "<< index);
 
-			for(int i=marker_nr;i<=model->rowCount();++i)
-			{
+			for(int i=index+1; i<model->rowCount(); i++) {
 				model->setData(model->index((i-1),0,QModelIndex()),QVariant((i-1)),Qt::EditRole);
 			}
+
 			//check how to properly set the selection
 			ui_.treeView->selectionModel()->setCurrentIndex(model->index((model->rowCount()-1),0,QModelIndex()),QItemSelectionModel::ClearAndSelect);
-			ui_.txtPointName->setText(QString::number(model->rowCount()-1));
-			pointRange();
 		}
 
 		void PathPlanningWidget::pointPosUpdated_slot(const tf::Transform& point_pos, const char* marker_name)
 		{
-			/*! When the user updates the position of the Way-Point or the User Interactive Marker, the information in
-			 *  the TreeView also needs to be updated to correspond to the current pose of the InteractiveMarkers.
+			/**
+			 * When the user updates the position of the Way-Point or the User Interactive Marker, the information in
+			 * the TreeView also needs to be updated to correspond to the current pose of the InteractiveMarkers.
 			*/
 			QAbstractItemModel *model = ui_.treeView->model();
 
@@ -406,7 +391,7 @@ namespace moveit_cartesian_plan_plugin
 			QString orient_y = QString::number(ry);
 			QString orient_z = QString::number(rz);
 
-			if((strcmp(marker_name,"add_point_button") == 0) || (atoi(marker_name)==0))
+			/*if((strcmp(marker_name,"add_point_button") == 0) || (atoi(marker_name)==0))
 			{
 				QString pos_s;
 				pos_s = pos_x + "; " + pos_y + "; " + pos_z + ";";
@@ -418,7 +403,7 @@ namespace moveit_cartesian_plan_plugin
 				model->setData(model->index(0,2),QVariant(orient_s),Qt::EditRole);
 			}
 			else
-			{
+			{*/
 
 				int changed_marker = atoi(marker_name);
 				//**********************update the positions and orientations of the children as well*******************
@@ -437,7 +422,7 @@ namespace moveit_cartesian_plan_plugin
 				model->setData(model->index(1, 2, chldind_orient), QVariant(orient_y), Qt::EditRole);
 				model->setData(model->index(2, 2, chldind_orient), QVariant(orient_z), Qt::EditRole);
 				//******************************************************************************************************
-			}
+			//}
 
 		}
 
@@ -445,21 +430,28 @@ namespace moveit_cartesian_plan_plugin
 		{
 			/*! This function handles the user interactions in the TreeView Widget.
 			 *	The function captures an event of data change and updates the information in the TreeView and the RViz
-			 *  enviroment.
+			 *  environment.
 			*/
 			qRegisterMetaType<std::string>("std::string");
 			QAbstractItemModel *model = ui_.treeView->model();
 			QVariant index_data;
-			ROS_INFO_STREAM("Data changed in index:" << index.row() << "parent row" <<index2.parent().row());
+			ROS_INFO_STREAM("Data changed. index: {row: "<<index.row()<<"; column: "<<index.column()<<"}, index2: {row: "<<index2.row()<<"; column: " <<index2.column()<<"}");
 
-			if ((index.parent() == QModelIndex()) && (index.row()!=0))
+			QModelIndex parent = index ;
+			while (parent.parent() != QModelIndex()) {
+				parent = parent.parent();
+			}
+
+			ROS_INFO_STREAM("Found main root");
+			/*if ((index.parent() == QModelIndex()) && (index.row()!=0))
 			{
 
 
 			}
 			else if(((index.parent().parent()) != QModelIndex()) && (index.parent().parent().row()!=0))
-			{
-				QModelIndex main_root = index.parent().parent();
+			{*/
+				//QModelIndex main_root = index.parent().parent();
+				QModelIndex main_root = parent;
 				std::stringstream s;
 				s<<main_root.row();
 				std::string temp_str = s.str();
@@ -485,7 +477,7 @@ namespace moveit_cartesian_plan_plugin
 				tf::Transform point_pos =  tf::Transform(tf::createQuaternionFromRPY(rx,ry,rz),p);
 
 				Q_EMIT pointPosUpdated_signal(point_pos,temp_str.c_str());
-			}
+			//}
 
 		}
 		void PathPlanningWidget::parseWayPointBtn_slot()
@@ -579,11 +571,10 @@ namespace moveit_cartesian_plan_plugin
 			*/
 			QAbstractItemModel *model = ui_.treeView->model();
 			model->removeRows(0,model->rowCount());
-			ui_.txtPointName->setText("0");
+			selectedPoint_ = -1 ;
 			tf::Transform t;
 			t.setIdentity();
 			insertRow(t,0);
-			pointRange();
 
 			Q_EMIT clearAllPoints_signal();
 		}
@@ -775,6 +766,10 @@ namespace moveit_cartesian_plan_plugin
 			pose.orientation.z = q.z() ;
 
 			Q_EMIT moveToPose_signal(pose);
+		}
+
+		void PathPlanningWidget::on_moveToWaypointButton_clicked() {
+			sendCartTrajectoryParamsFromUI();
 		}
 	}
 }

@@ -86,21 +86,19 @@ namespace moveit_cartesian_plan_plugin
 			QStandardItemModel* pointDataModel;
 
 		private:
-			QStringList pointList;
-			//! Checks the range of the points.
-			void pointRange();
+			int selectedPoint_ ;
 
 		protected Q_SLOTS:
 			//! Initialize the TreeView with the User Interactive Marker.
 			void initTreeView();
 			//! Handle the event of a Way-Point deleted from the RQT UI.
-			void pointDeletedUI();
+			void on_deleteWaypointButton_clicked();
 			//! Handle the event of a Way-Point added from the RQT UI.
 			void on_btnAddPoint_clicked();
 			//! Insert a row in the TreeView.
 			void insertRow(const tf::Transform& point_pos,const int count);
 			//! Remove a row in the TreeView.
-			void removeRow(int marker_nr);
+			void removeRow(int index);
 			//! Handle the event when a User updates the pose of a Way-Point through the RQT UI.
 			void pointPosUpdated_slot( const tf::Transform& point_pos, const char* marker_name);
 			//! Get the selected Way-Point from the RQT UI.
@@ -149,12 +147,13 @@ namespace moveit_cartesian_plan_plugin
 			void on_copyCurrentPoseButton_clicked();
 			void on_addCurrentPositionPointButton_clicked();
 			void on_moveToNewPositionButton_clicked();
+			void on_moveToWaypointButton_clicked();
 
 		Q_SIGNALS:
 			//! Notify RViz enviroment that a new Way-Point has been added from RQT.
 		    void addPoint( const tf::Transform point_pos );
 		    //! Notify RViz enviroment that a new Way-Point has been deleted from RQT.
-		    void pointDelUI_signal( std::string marker_name);
+		    void pointDeleteUI_signal(int index);
 		    //! Notify RViz enviroment that a new Way-Point has been modified from RQT.
 		    void pointPosUpdated_signal( const tf::Transform& position, const char* marker_name);
 		    //! Signal to notify the Cartesian Path Planning Class that an Execute Cartesian Plan button has been pressed.
