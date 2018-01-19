@@ -57,7 +57,6 @@ namespace moveit_cartesian_plan_plugin
 			ui_.btn_LoadPath->setToolTip(tr("Load Way-Points from a file"));
 			ui_.btn_SavePath->setToolTip(tr("Save Way-Points to a file"));
 			ui_.btnAddPoint->setToolTip(tr("Add a new Way-Point"));
-			ui_.btnRemovePoint->setToolTip(tr("Remove a selected Way-Point"));
 
 			ui_.combo_DOF_FT->addItem("X");
 			ui_.combo_DOF_FT->addItem("Y");
@@ -233,6 +232,22 @@ namespace moveit_cartesian_plan_plugin
 			rx = DEG2RAD(ui_.LineEditRx->text().toDouble());
 			ry = DEG2RAD(ui_.LineEditRy->text().toDouble());
 			rz = DEG2RAD(ui_.LineEditRz->text().toDouble());
+
+			// // create transform
+			tf::Transform point_pos( tf::Transform(tf::createQuaternionFromRPY(rx,ry,rz),tf::Vector3(x,y,z)));
+			Q_EMIT addPoint(point_pos);
+
+			pointRange();
+		}
+
+		void PathPlanningWidget::on_addCurrentPositionPointButton_clicked() {
+			double x,y,z,rx,ry,rz;
+			x = ui_.currentPositionX->text().toDouble();
+			y = ui_.currentPositionY->text().toDouble();
+			z = ui_.currentPositionZ->text().toDouble();
+			rx = DEG2RAD(ui_.currentPositionRx->text().toDouble());
+			ry = DEG2RAD(ui_.currentPositionRy->text().toDouble());
+			rz = DEG2RAD(ui_.currentPositionRz->text().toDouble());
 
 			// // create transform
 			tf::Transform point_pos( tf::Transform(tf::createQuaternionFromRPY(rx,ry,rz),tf::Vector3(x,y,z)));
@@ -612,13 +627,13 @@ namespace moveit_cartesian_plan_plugin
 			rz = RAD2DEG(rz);
 
 			// set up the starting values for the lineEdit of the positions
-			ui_.currentPoseX->setText(QString::number(p.x()));
-			ui_.currentPoseY->setText(QString::number(p.y()));
-			ui_.currentPoseZ->setText(QString::number(p.z()));
+			ui_.currentPositionX->setText(QString::number(p.x()));
+			ui_.currentPositionY->setText(QString::number(p.y()));
+			ui_.currentPositionZ->setText(QString::number(p.z()));
 			// set up the starting values for the lineEdit of the orientations, in Euler angles
-			ui_.currentPoseRx->setText(QString::number(rx));
-			ui_.currentPoseRy->setText(QString::number(ry));
-			ui_.currentPoseRz->setText(QString::number(rz));
+			ui_.currentPositionRx->setText(QString::number(rx));
+			ui_.currentPositionRy->setText(QString::number(ry));
+			ui_.currentPositionRz->setText(QString::number(rz));
 		}
 
 		void PathPlanningWidget::cartesianPathStartedHandler()
@@ -727,14 +742,36 @@ namespace moveit_cartesian_plan_plugin
 		}
 
 		void PathPlanningWidget::on_copyCurrentPoseButton_clicked() {
-			ui_.LineEditX->setText(ui_.currentPoseX->text());
-			ui_.LineEditY->setText(ui_.currentPoseY->text());
-			ui_.LineEditZ->setText(ui_.currentPoseZ->text());
+			ui_.LineEditX->setText(ui_.currentPositionX->text());
+			ui_.LineEditY->setText(ui_.currentPositionY->text());
+			ui_.LineEditZ->setText(ui_.currentPositionZ->text());
 
 			// set up the starting values for the lineEdit of the orientations, in Euler angles
-			ui_.LineEditRx->setText(ui_.currentPoseRx->text());
-			ui_.LineEditRy->setText(ui_.currentPoseRy->text());
-			ui_.LineEditRz->setText(ui_.currentPoseRz->text());
+			ui_.LineEditRx->setText(ui_.currentPositionRx->text());
+			ui_.LineEditRy->setText(ui_.currentPositionRy->text());
+			ui_.LineEditRz->setText(ui_.currentPositionRz->text());
+		}
+
+		void PathPlanningWidget::on_moveToNewPositionButton_clicked() {
+			double rx,ry,rz;
+			rx = DEG2RAD(ui_.LineEditRx->text().toDouble());
+			ry = DEG2RAD(ui_.LineEditRy->text().toDouble());
+			rz = DEG2RAD(ui_.LineEditRz->text().toDouble());
+
+			tf::Quaternion q = tf::createQuaternionFromRPY(rx,ry,rz);
+
+			geometry_msgs::Pose pose ;
+
+			pose.position.x = ui_.LineEditX->text().toDouble();
+			pose.position.y = ui_.LineEditY->text().toDouble();
+			pose.position.z = ui_.LineEditZ->text().toDouble();
+
+			pose.orientation.w = q.w() ;
+			pose.orientation.x = q.x() ;
+			pose.orientation.y = q.y() ;
+			pose.orientation.z = q.z() ;
+
+			Q_EMIT moveToPose_signal(pose);
 		}
 	}
 }

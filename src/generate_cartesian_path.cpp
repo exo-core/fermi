@@ -110,7 +110,7 @@ void GenerateCartesianPath::setCartParams(double plan_time_,double cart_step_siz
   AVOID_COLLISIONS_ = avoid_collisions_;
 }
 
-void GenerateCartesianPath::moveToPose(std::vector<geometry_msgs::Pose> waypoints)
+void GenerateCartesianPath::moveToPoses(std::vector<geometry_msgs::Pose> waypoints)
 {
     /*!
 
@@ -157,7 +157,7 @@ void GenerateCartesianPath::cartesianPathHandler(std::vector<geometry_msgs::Pose
       This prevents the RViz and the Plugin to lock.
   */
   ROS_INFO("Starting concurrent process for Cartesian Path");
-  QFuture<void> future = QtConcurrent::run(this, &GenerateCartesianPath::moveToPose, waypoints);
+  QFuture<void> future = QtConcurrent::run(this, &GenerateCartesianPath::moveToPoses, waypoints);
 }
 
 
@@ -223,8 +223,14 @@ void GenerateCartesianPath::moveToHome()
     geometry_msgs::Pose home_pose;
     tf::poseTFToMsg(end_effector_,home_pose);
 
+    //Q_EMIT moveToPose_signal(home_pose);
+    moveToPose(home_pose);
+}
+
+void GenerateCartesianPath::moveToPose(geometry_msgs::Pose pose)
+{
     std::vector<geometry_msgs::Pose> waypoints;
-    waypoints.push_back(home_pose);
+    waypoints.push_back(pose);
 
     cartesianPathHandler(waypoints);
 }

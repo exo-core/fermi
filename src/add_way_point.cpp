@@ -90,6 +90,8 @@ void AddWayPoint::onInitialize()
 
     connect(widget_,SIGNAL(cartesianPathParamsFromUI_signal(double, double, double, bool, bool )),path_generate_,SLOT(setCartParams(double, double, double, bool, bool)));
 
+	connect(widget_,SIGNAL(moveToPose_signal(geometry_msgs::Pose)),path_generate_,SLOT(moveToPose(geometry_msgs::Pose)));
+	//connect(path_generate_,SIGNAL(moveToPose_signal(geometry_msgs::Pose)),path_generate_,SLOT(moveToPose(geometry_msgs::Pose)));
     connect(widget_,SIGNAL(moveToHomeFromUI_signal()),path_generate_,SLOT(moveToHome()));
 
     connect(widget_,SIGNAL(parseWayPointBtn_signal()),this,SLOT(parseWayPoints()));

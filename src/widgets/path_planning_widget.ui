@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>424</width>
-    <height>708</height>
+    <width>406</width>
+    <height>739</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -69,149 +69,258 @@
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_11">
-           <item>
-            <widget class="QLabel" name="label_2">
+        <layout class="QGridLayout" name="gridLayout_3" columnstretch="48,4,48">
+         <item row="2" column="2">
+          <widget class="QPushButton" name="addCurrentPositionPointButton">
+           <property name="text">
+            <string>Add Point</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QPushButton" name="btnAddPoint">
+           <property name="text">
+            <string>Add Point</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <layout class="QGridLayout" name="gridLayout_5">
+           <item row="1" column="0">
+            <widget class="QLabel" name="labelX">
              <property name="text">
-              <string>Set Position/Orientation</string>
+              <string>X (m)</string>
              </property>
             </widget>
            </item>
-           <item>
-            <layout class="QGridLayout" name="gridLayout_4">
-             <item row="4" column="0">
-              <widget class="QLabel" name="ryLabel">
-               <property name="text">
-                <string>Ry (deg)</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QLineEdit" name="LineEditX">
-               <property name="styleSheet">
-                <string notr="true"/>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="0">
-              <widget class="QLabel" name="xLabel">
-               <property name="text">
-                <string>X (m)</string>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="0">
-              <widget class="QLabel" name="rzLabel">
-               <property name="text">
-                <string>Rz (deg)</string>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="1">
-              <widget class="QLineEdit" name="LineEditRz">
-               <property name="styleSheet">
-                <string notr="true"/>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QLineEdit" name="LineEditZ">
-               <property name="styleSheet">
-                <string notr="true"/>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="rxLabel">
-               <property name="text">
-                <string>Rx (deg)</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="zLabel">
-               <property name="text">
-                <string>Z (m)</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QLineEdit" name="LineEditY">
-               <property name="styleSheet">
-                <string notr="true"/>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="1">
-              <widget class="QLineEdit" name="LineEditRx">
-               <property name="styleSheet">
-                <string notr="true"/>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="1">
-              <widget class="QLineEdit" name="LineEditRy">
-               <property name="styleSheet">
-                <string notr="true"/>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="yLabel">
-               <property name="text">
-                <string>Y (m)</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
+           <item row="4" column="1">
+            <widget class="QLineEdit" name="currentPositionRx">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
            </item>
-           <item>
-            <widget class="QPushButton" name="btnAddPoint">
+           <item row="3" column="1">
+            <widget class="QLineEdit" name="currentPositionZ">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QLineEdit" name="currentPositionRy">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="labelY">
              <property name="text">
-              <string>Add Point</string>
+              <string>Y (m)</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="currentPositionY">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
+            <widget class="QLineEdit" name="currentPositionRz">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="labelZ">
+             <property name="text">
+              <string>Z(m)</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="labelRx">
+             <property name="text">
+              <string>Rx (deg)</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="labelRy">
+             <property name="text">
+              <string>Ry (deg)</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <widget class="QLabel" name="labelRz">
+             <property name="text">
+              <string>Rz (deg)</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="currentPositionX">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
             </widget>
            </item>
           </layout>
          </item>
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_13">
-           <item>
-            <spacer name="verticalSpacer_7">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
+         <item row="3" column="0">
+          <widget class="QPushButton" name="moveToNewPositionButton">
+           <property name="text">
+            <string>Move to Position</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="minimumSize">
+            <size>
+             <width>165</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Set Position/Orientation</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <layout class="QGridLayout" name="gridLayout_4">
+           <item row="4" column="0">
+            <widget class="QLabel" name="ryLabel">
+             <property name="text">
+              <string>Ry (deg)</string>
              </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
+            </widget>
            </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="xLabel">
+             <property name="text">
+              <string>X (m)</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="rzLabel">
+             <property name="text">
+              <string>Rz (deg)</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QLineEdit" name="LineEditRz">
+             <property name="styleSheet">
+              <string notr="true"/>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="LineEditZ">
+             <property name="styleSheet">
+              <string notr="true"/>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="rxLabel">
+             <property name="text">
+              <string>Rx (deg)</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="zLabel">
+             <property name="text">
+              <string>Z (m)</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="LineEditY">
+             <property name="styleSheet">
+              <string notr="true"/>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLineEdit" name="LineEditRx">
+             <property name="styleSheet">
+              <string notr="true"/>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QLineEdit" name="LineEditRy">
+             <property name="styleSheet">
+              <string notr="true"/>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="yLabel">
+             <property name="text">
+              <string>Y (m)</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="LineEditX">
+             <property name="styleSheet">
+              <string notr="true"/>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="1" column="1">
+          <layout class="QVBoxLayout" name="verticalLayout_13">
            <item>
             <widget class="QPushButton" name="copyCurrentPoseButton">
              <property name="enabled">
@@ -232,7 +341,7 @@
              <property name="maximumSize">
               <size>
                <width>24</width>
-               <height>100</height>
+               <height>128</height>
               </size>
              </property>
              <property name="baseSize">
@@ -241,149 +350,28 @@
                <height>0</height>
               </size>
              </property>
+             <property name="toolTip">
+              <string>Copy values from current position/orientation</string>
+             </property>
              <property name="text">
               <string>◁</string>
              </property>
             </widget>
            </item>
-           <item>
-            <spacer name="verticalSpacer_4">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
           </layout>
          </item>
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_12">
-           <item>
-            <widget class="QLabel" name="label_35">
-             <property name="text">
-              <string>Current Position</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QGridLayout" name="gridLayout_5">
-             <item row="1" column="0">
-              <widget class="QLabel" name="labelX">
-               <property name="text">
-                <string>X (m)</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="1">
-              <widget class="QLineEdit" name="currentPoseRx">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="1">
-              <widget class="QLineEdit" name="currentPoseZ">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="1">
-              <widget class="QLineEdit" name="currentPoseRy">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="labelY">
-               <property name="text">
-                <string>Y (m)</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QLineEdit" name="currentPoseY">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QLineEdit" name="currentPoseX">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="6" column="1">
-              <widget class="QLineEdit" name="currentPoseRz">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="labelZ">
-               <property name="text">
-                <string>Z(m)</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="0">
-              <widget class="QLabel" name="labelRx">
-               <property name="text">
-                <string>Rx (deg)</string>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="0">
-              <widget class="QLabel" name="labelRy">
-               <property name="text">
-                <string>Ry (deg)</string>
-               </property>
-              </widget>
-             </item>
-             <item row="6" column="0">
-              <widget class="QLabel" name="labelRz">
-               <property name="text">
-                <string>Rz (deg)</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <widget class="QPushButton" name="addCurrentPositionbPointButton">
-             <property name="text">
-              <string>Add Point</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
+         <item row="0" column="2">
+          <widget class="QLabel" name="label_35">
+           <property name="minimumSize">
+            <size>
+             <width>165</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Current Position/Orientation</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -395,7 +383,7 @@
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="48,4,48">
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <property name="margin">
@@ -554,7 +542,7 @@
         </widget>
        </item>
        <item>
-        <layout class="QGridLayout" name="group_Impedance" rowstretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0" rowminimumheight="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0">
+        <layout class="QGridLayout" name="group_Impedance" rowstretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0" rowminimumheight="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0">
          <item row="16" column="3">
           <widget class="QLineEdit" name="txt_NullSpace_Damping">
            <property name="text">
@@ -1402,7 +1390,6 @@
  </widget>
  <tabstops>
   <tabstop>LineEditX</tabstop>
-  <tabstop>btnAddPoint</tabstop>
   <tabstop>combo_planGroup</tabstop>
   <tabstop>btn_ClearAllPoints</tabstop>
   <tabstop>btn_SavePath</tabstop>

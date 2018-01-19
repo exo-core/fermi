@@ -147,6 +147,9 @@ namespace moveit_cartesian_plan_plugin
 			void withFTControl(int state);
 
 			void on_copyCurrentPoseButton_clicked();
+			void on_addCurrentPositionPointButton_clicked();
+			void on_moveToNewPositionButton_clicked();
+
 		Q_SIGNALS:
 			//! Notify RViz enviroment that a new Way-Point has been added from RQT.
 		    void addPoint( const tf::Transform point_pos );
@@ -167,6 +170,8 @@ namespace moveit_cartesian_plan_plugin
 
 		    //! On this signal we will call the function for which will execute the MoveIt command to bring the robot in its initial state.
 		    void moveToHomeFromUI_signal();
+
+			void moveToPose_signal(geometry_msgs::Pose);
 
 			void sendSendSelectedPlanGroup(int index);
 			//signaling the Qt that the Impedance params have changed via the UI

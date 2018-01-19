@@ -54,7 +54,7 @@ public:
 
 public Q_SLOTS:
 	//! Get the Way-Points from the RViz enviroment and use them to generate Cartesian Path.
-	void moveToPose(std::vector<geometry_msgs::Pose> waypoints);
+	void moveToPoses(std::vector<geometry_msgs::Pose> waypoints);
 	//! Checks if the Way-Point is in the valid IK solution for the Robot.
 	void checkWayPointValidity(const geometry_msgs::Pose& waypoints,const int marker_name);
 	//! Slot for letting the Cartesian Path planning class that the RViz has finished with its initialization.
@@ -68,6 +68,7 @@ public Q_SLOTS:
 
 	//! Move to starting position of the robot. As loaded by default
 	void moveToHome();
+	void moveToPose(geometry_msgs::Pose pose);
 
 Q_SIGNALS:
 	//! Let the RViz that a Way-Point is outside the IK solution.
@@ -83,6 +84,8 @@ Q_SIGNALS:
 	void cartesianPathCompleted(double fraction);
 	//! Send the planning groups to the GUI
 	void sendCartPlanGroup(std::vector< std::string > group_names);
+
+	void moveToPose_signal(geometry_msgs::Pose);
 
 protected:
     //! MoveIt protected variables.
