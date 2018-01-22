@@ -215,12 +215,12 @@ namespace moveit_cartesian_plan_plugin
 			This function is connected to the AddPoint button click() signal and sends the addPoint(point_pos) to inform the RViz enviroment that a new Way-Point has been added.
 			*/
 			double x,y,z,rx,ry,rz;
-			x = ui_.LineEditX->text().toDouble();
-			y = ui_.LineEditY->text().toDouble();
-			z = ui_.LineEditZ->text().toDouble();
-			rx = DEG2RAD(ui_.LineEditRx->text().toDouble());
-			ry = DEG2RAD(ui_.LineEditRy->text().toDouble());
-			rz = DEG2RAD(ui_.LineEditRz->text().toDouble());
+			x = ui_.newWaypointX->value();
+			y = ui_.newWaypointY->value();
+			z = ui_.newWaypointZ->value();
+			rx = DEG2RAD(ui_.newWaypointRx->value());
+			ry = DEG2RAD(ui_.newWaypointRy->value());
+			rz = DEG2RAD(ui_.newWaypointRz->value());
 
 			// // create transform
 			tf::Transform point_pos( tf::Transform(tf::createQuaternionFromRPY(rx,ry,rz),tf::Vector3(x,y,z)));
@@ -229,12 +229,12 @@ namespace moveit_cartesian_plan_plugin
 
 		void PathPlanningWidget::on_addCurrentPositionPointButton_clicked() {
 			double x,y,z,rx,ry,rz;
-			x = ui_.currentPositionX->text().toDouble();
-			y = ui_.currentPositionY->text().toDouble();
-			z = ui_.currentPositionZ->text().toDouble();
-			rx = DEG2RAD(ui_.currentPositionRx->text().toDouble());
-			ry = DEG2RAD(ui_.currentPositionRy->text().toDouble());
-			rz = DEG2RAD(ui_.currentPositionRz->text().toDouble());
+			x = ui_.currentPositionX->value();
+			y = ui_.currentPositionY->value();
+			z = ui_.currentPositionZ->value();
+			rx = DEG2RAD(ui_.currentPositionRx->value());
+			ry = DEG2RAD(ui_.currentPositionRy->value());
+			rz = DEG2RAD(ui_.currentPositionRz->value());
 
 			// // create transform
 			tf::Transform point_pos( tf::Transform(tf::createQuaternionFromRPY(rx,ry,rz),tf::Vector3(x,y,z)));
@@ -594,13 +594,13 @@ namespace moveit_cartesian_plan_plugin
 			rz = RAD2DEG(rz);
 
 			// set up the starting values for the lineEdit of the positions
-			ui_.LineEditX->setText(QString::number(p.x()));
-			ui_.LineEditY->setText(QString::number(p.y()));
-			ui_.LineEditZ->setText(QString::number(p.z()));
+			ui_.newWaypointX->setValue(p.x());
+			ui_.newWaypointY->setValue(p.y());
+			ui_.newWaypointZ->setValue(p.z());
 			// set up the starting values for the lineEdit of the orientations, in Euler angles
-			ui_.LineEditRx->setText(QString::number(rx));
-			ui_.LineEditRy->setText(QString::number(ry));
-			ui_.LineEditRz->setText(QString::number(rz));
+			ui_.newWaypointRx->setValue(rx);
+			ui_.newWaypointRy->setValue(ry);
+			ui_.newWaypointRz->setValue(rz);
 		}
 
 		void PathPlanningWidget::updateCurrentPositionDisplay(const std::string, const tf::Transform end_effector)
@@ -618,13 +618,13 @@ namespace moveit_cartesian_plan_plugin
 			rz = RAD2DEG(rz);
 
 			// set up the starting values for the lineEdit of the positions
-			ui_.currentPositionX->setText(QString::number(p.x()));
-			ui_.currentPositionY->setText(QString::number(p.y()));
-			ui_.currentPositionZ->setText(QString::number(p.z()));
+			ui_.currentPositionX->setValue(p.x());
+			ui_.currentPositionY->setValue(p.y());
+			ui_.currentPositionZ->setValue(p.z());
 			// set up the starting values for the lineEdit of the orientations, in Euler angles
-			ui_.currentPositionRx->setText(QString::number(rx));
-			ui_.currentPositionRy->setText(QString::number(ry));
-			ui_.currentPositionRz->setText(QString::number(rz));
+			ui_.currentPositionRx->setValue(rx);
+			ui_.currentPositionRy->setValue(ry);
+			ui_.currentPositionRz->setValue(rz);
 		}
 
 		void PathPlanningWidget::cartesianPathStartedHandler()
@@ -734,31 +734,31 @@ namespace moveit_cartesian_plan_plugin
 		}
 
 		void PathPlanningWidget::on_copyCurrentPoseButton_clicked() {
-			ui_.LineEditX->setText(ui_.currentPositionX->text());
-			ui_.LineEditY->setText(ui_.currentPositionY->text());
-			ui_.LineEditZ->setText(ui_.currentPositionZ->text());
+			ui_.newWaypointX->setValue(ui_.currentPositionX->value());
+			ui_.newWaypointY->setValue(ui_.currentPositionY->value());
+			ui_.newWaypointZ->setValue(ui_.currentPositionZ->value());
 
 			// set up the starting values for the lineEdit of the orientations, in Euler angles
-			ui_.LineEditRx->setText(ui_.currentPositionRx->text());
-			ui_.LineEditRy->setText(ui_.currentPositionRy->text());
-			ui_.LineEditRz->setText(ui_.currentPositionRz->text());
+			ui_.newWaypointRx->setValue(ui_.currentPositionRx->value());
+			ui_.newWaypointRy->setValue(ui_.currentPositionRy->value());
+			ui_.newWaypointRz->setValue(ui_.currentPositionRz->value());
 		}
 
 		void PathPlanningWidget::on_moveToNewPositionButton_clicked() {
 			sendCartTrajectoryParamsFromUI();
 
 			double rx,ry,rz;
-			rx = DEG2RAD(ui_.LineEditRx->text().toDouble());
-			ry = DEG2RAD(ui_.LineEditRy->text().toDouble());
-			rz = DEG2RAD(ui_.LineEditRz->text().toDouble());
+			rx = DEG2RAD(ui_.newWaypointRx->value());
+			ry = DEG2RAD(ui_.newWaypointRy->value());
+			rz = DEG2RAD(ui_.newWaypointRz->value());
 
 			tf::Quaternion q = tf::createQuaternionFromRPY(rx,ry,rz);
 
 			geometry_msgs::Pose pose ;
 
-			pose.position.x = ui_.LineEditX->text().toDouble();
-			pose.position.y = ui_.LineEditY->text().toDouble();
-			pose.position.z = ui_.LineEditZ->text().toDouble();
+			pose.position.x = ui_.newWaypointX->value();
+			pose.position.y = ui_.newWaypointY->value();
+			pose.position.z = ui_.newWaypointZ->value();
 
 			pose.orientation.w = q.w() ;
 			pose.orientation.x = q.x() ;
