@@ -4,7 +4,7 @@
 #include <math.h>
 #include <moveit/robot_state/conversions.h>
 #include <moveit/trajectory_processing/iterative_time_parameterization.h>
-#include <moveit_cartesian_plan_plugin/generate_cartesian_path.hpp>
+#include <moveit_cartesian_plan_plugin/generate_cartesian_path.h>
 
 #include <moveit/planning_interface/planning_interface.h>
 #include <moveit/planning_scene/planning_scene.h>

@@ -42,18 +42,20 @@ set(
 		src/generate_cartesian_path.cpp
 		src/set_cart_impedance.cpp
 		src/set_cart_ft_control.cpp
+		src/waypoint.cpp
 		${MOC_FILES}
 )
 
 set(
 	moveit_cartesian_plan_plugin_HDRS
-		include/moveit_cartesian_plan_plugin/add_way_point.hpp
-		include/moveit_cartesian_plan_plugin/point_tree_item.hpp
-		include/moveit_cartesian_plan_plugin/point_tree_model.hpp
-		include/moveit_cartesian_plan_plugin/widgets/path_planning_widget.hpp
-		include/moveit_cartesian_plan_plugin/generate_cartesian_path.hpp
-		include/moveit_cartesian_plan_plugin/set_cart_impedance.hpp
-		include/moveit_cartesian_plan_plugin/set_cart_ft_control.hpp
+		include/moveit_cartesian_plan_plugin/add_way_point.h
+		include/moveit_cartesian_plan_plugin/point_tree_item.h
+		include/moveit_cartesian_plan_plugin/point_tree_model.h
+		include/moveit_cartesian_plan_plugin/widgets/path_planning_widget.h
+		include/moveit_cartesian_plan_plugin/generate_cartesian_path.h
+		include/moveit_cartesian_plan_plugin/set_cart_impedance.h
+		include/moveit_cartesian_plan_plugin/set_cart_ft_control.h
+		include/moveit_cartesian_plan_plugin/waypoint.h
 )
 
 set(moveit_cartesian_plan_plugin_UIS
@@ -115,7 +117,12 @@ target_link_libraries(
 		${moveit_move_group_interface}
 		yaml-cpp
 )
-## target_link_libraries(${PROJECT_NAME} yaml-cpp)
+
+add_dependencies(
+	${PROJECT_NAME}
+		${${PROJECT_NAME}_EXPORTED_TARGETS}
+		${catkin_EXPORTED_TARGETS}
+)
 
 find_package(class_loader)
 class_loader_hide_library_symbols(${PROJECT_NAME})

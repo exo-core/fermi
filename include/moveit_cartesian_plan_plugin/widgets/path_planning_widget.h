@@ -14,7 +14,7 @@
 
 #include <ui_path_planning_widget.h>
 
-#include <moveit_cartesian_plan_plugin/add_way_point.hpp>
+#include <moveit_cartesian_plan_plugin/add_way_point.h>
 /*!
  *  \brief The set of messages necessary to publish Cartesian Impedance/Force Control parameters via ROS Topic
 */
@@ -86,7 +86,7 @@ namespace moveit_cartesian_plan_plugin
 			QStandardItemModel* pointDataModel;
 
 		private:
-			int selectedPoint_ ;
+			int selected_waypoint_ ;
 
 		protected Q_SLOTS:
 			//! Initialize the TreeView with the User Interactive Marker.

@@ -2,7 +2,7 @@
 #include <boost/assign/list_of.hpp>
 #include <boost/assert.hpp>
 #include <math.h>
-#include <moveit_cartesian_plan_plugin/set_cart_impedance.hpp>
+#include <moveit_cartesian_plan_plugin/set_cart_impedance.h>
 
 
 SetCartesianImpedance::SetCartesianImpedance(QObject *parent)
