@@ -15,6 +15,7 @@
 #include <ui_path_planning_widget.h>
 
 #include <moveit_cartesian_plan_plugin/add_way_point.h>
+#include <moveit_cartesian_plan_plugin/waypoint.h>
 /*!
  *  \brief The set of messages necessary to publish Cartesian Impedance/Force Control parameters via ROS Topic
 */
@@ -86,6 +87,8 @@ namespace moveit_cartesian_plan_plugin
 			QStandardItemModel* pointDataModel;
 
 		private:
+			std::string getWaypointName(const int row_index) const ;
+			int name_counter_ = 1;
 			int selected_waypoint_ ;
 
 		protected Q_SLOTS:
@@ -96,11 +99,11 @@ namespace moveit_cartesian_plan_plugin
 			//! Handle the event of a Way-Point added from the RQT UI.
 			void on_btnAddPoint_clicked();
 			//! Insert a row in the TreeView.
-			void insertRow(const tf::Transform& point_pos,const int count);
+			void insertRow(const Waypoint& point_pos,const int count);
 			//! Remove a row in the TreeView.
 			void removeRow(int index);
 			//! Handle the event when a User updates the pose of a Way-Point through the RQT UI.
-			void pointPosUpdated_slot( const tf::Transform& point_pos, const char* marker_name);
+			void pointPosUpdated_slot( const Waypoint& point_pos, const char* marker_name);
 			//! Get the selected Way-Point from the RQT UI.
 			void selectedPoint(const QModelIndex& current, const QModelIndex& previous);
 			//! Handle the even when the data in the TreeView has been changed.
@@ -151,11 +154,11 @@ namespace moveit_cartesian_plan_plugin
 
 		Q_SIGNALS:
 			//! Notify RViz enviroment that a new Way-Point has been added from RQT.
-		    void addPoint( const tf::Transform point_pos );
+		    void addPoint( const Waypoint point_pos );
 		    //! Notify RViz enviroment that a new Way-Point has been deleted from RQT.
 		    void pointDeleteUI_signal(int index);
 		    //! Notify RViz enviroment that a new Way-Point has been modified from RQT.
-		    void pointPosUpdated_signal( const tf::Transform& position, const char* marker_name);
+		    void pointPosUpdated_signal( const Waypoint& position, const int index);
 		    //! Signal to notify the Cartesian Path Planning Class that an Execute Cartesian Plan button has been pressed.
 		    void parseWayPointBtn_signal();
 		    //! Save to file button has been pressed.

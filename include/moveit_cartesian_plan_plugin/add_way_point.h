@@ -79,7 +79,7 @@ namespace moveit_cartesian_plan_plugin {
 			virtual void processFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback );
 
 			//! Make a new Interactive Marker Way-Point
-			virtual void makeArrow(const tf::Transform& point_pos, const int count_arrow);
+			virtual void makeArrow(const Waypoint& point_pos, const int count_arrow);
 			//! User Interaction Arrow Marker
 			virtual void makeInteractiveMarker();
 
@@ -93,9 +93,9 @@ namespace moveit_cartesian_plan_plugin {
 			//! Slot for handling the event of way-point deletion.
 			virtual void pointDeleted(int index);
 			//! Slot for handling the add way-point event from the RQT UI.
-			void addPointFromUI( const tf::Transform point_pos);
+			void addPointFromUI(const Waypoint point_pos);
 			//! Slot for handling when the user updates the position of the Interactive Markers.
-			void pointPoseUpdated(const tf::Transform& point_pos, const char* marker_name);
+			void waypointUpdated(const Waypoint &point_pos, const int index);
 			//! Slot for parsing the Way-Points before sending them to the MoveIt class.
 			void parseWayPoints();
 			//! Save all the Way-Points to a yaml file.
@@ -113,9 +113,9 @@ namespace moveit_cartesian_plan_plugin {
 			//! Signal for notifying that a way-point was deleted in the RViz enviroment.
 			void pointDeleteRviz(int marker_name_nr);
 			//! Signal for notifying that a way-point has been added from the RViz enviroment.
-			void addPointRViz(const tf::Transform& point_pos, const int count);
+			void addPointRViz(const Waypoint& point_pos, const int count);
 			//! Signal that the way-point position has been updated by the user from the RViz enviroment.
-			void pointPoseUpdatedRViz(const tf::Transform& point_pos, const char* marker_name);
+			void pointPoseUpdatedRViz(const Waypoint& point_pos, const char* marker_name);
 			//! Signal for sending all the Way-Points.
 			void wayPoints_signal(std::vector<geometry_msgs::Pose> waypoints);
 			//! Signal to check if the way-point is in valid IK solution.
@@ -152,7 +152,7 @@ namespace moveit_cartesian_plan_plugin {
 			interactive_markers::MenuHandler menu_handler_;
 
 			//! Vector for storing all the User Entered Way-Points.
-			std::vector<tf::Transform> waypoints_pos_;
+			std::vector<Waypoint> waypoints_;
 			//! The position of the User handlable Interactive Marker.
 			tf::Transform box_pos_;
 

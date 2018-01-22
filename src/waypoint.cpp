@@ -9,10 +9,14 @@ namespace moveit_cartesian_plan_plugin {
 	: name_(name) {
 	};
 
-	Waypoint::Waypoint(const std::string& name, tf::Transform pose)
+	Waypoint::Waypoint(const std::string& name, const tf::Transform& pose)
 	: name_(name),
 	  pose_(pose) {
 
+	}
+
+	bool Waypoint::operator ==(const Waypoint &other) const {
+		return name_ == other.name_ && pose_ == other.pose_ ;
 	}
 
 	Waypoint::~Waypoint() {
