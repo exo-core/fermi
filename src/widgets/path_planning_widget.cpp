@@ -9,9 +9,10 @@ namespace moveit_cartesian_plan_plugin
 		PathPlanningWidget::PathPlanningWidget(std::string ns):
 				param_ns_(ns)
 		{
-			/*! Constructor which calls the init() function.
+			/**
+			 * Constructor which calls the init() function.
+			 */
 
-			*/
 			init();
 		}
 
@@ -33,6 +34,7 @@ namespace moveit_cartesian_plan_plugin
              *   .
              *   .
       		 */
+
 			ui_.setupUi(this);
 
 			selected_waypoint_ = -1 ;
@@ -64,23 +66,23 @@ namespace moveit_cartesian_plan_plugin
 			ui_.combo_DOF_FT->addItem("Rz");
 
 			//connect(ui_.treeView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection & selected, const QItemSelection & deselected)),this,SLOT(selectedPoint(const QItemSelection & selected, const QItemSelection & deselected)));
-			connect(ui_.treeView->selectionModel(), SIGNAL(currentChanged(const QModelIndex&, const QModelIndex& )),this,SLOT(selectedPoint(const QModelIndex& , const QModelIndex&)));
-			connect(ui_.treeView->model(), SIGNAL(itemValueChanged(const QModelIndex&, const QVariant&)),this,SLOT(treeViewDataChanged(const QModelIndex&, const QVariant&)));
-			connect(ui_.targetPoint,SIGNAL(clicked()),this,SLOT(sendCartTrajectoryParamsFromUI()));
-			connect(ui_.targetPoint,SIGNAL(clicked()),this,SLOT(parseWayPointBtn_slot()));
-			connect(ui_.btn_LoadPath,SIGNAL(clicked()),this,SLOT(loadPointsFromFile()));
-			connect(ui_.btn_SavePath,SIGNAL(clicked()),this,SLOT(savePointsToFile()));
-			connect(ui_.btn_ClearAllPoints,SIGNAL(clicked()),this,SLOT(clearAllPoints_slot()));
+			connect(ui_.treeView->selectionModel(), SIGNAL(currentChanged(const QModelIndex&, const QModelIndex& )), this, SLOT(selectedPoint(const QModelIndex& , const QModelIndex&)));
+			connect(ui_.treeView->model(), SIGNAL(itemValueChanged(const QModelIndex&, const QVariant&)), this, SLOT(treeViewDataChanged(const QModelIndex&, const QVariant&)));
+			connect(ui_.targetPoint, SIGNAL(clicked()), this, SLOT(sendCartTrajectoryParamsFromUI()));
+			connect(ui_.targetPoint, SIGNAL(clicked()), this, SLOT(parseWayPointBtn_slot()));
+			connect(ui_.btn_LoadPath, SIGNAL(clicked()), this, SLOT(loadPointsFromFile()));
+			connect(ui_.btn_SavePath, SIGNAL(clicked()), this, SLOT(savePointsToFile()));
+			connect(ui_.btn_ClearAllPoints, SIGNAL(clicked()), this, SLOT(clearAllPoints_slot()));
 
-			connect(ui_.btn_moveToHome,SIGNAL(clicked()),this,SLOT(moveToHomeFromUI()));
-			connect(ui_.combo_planGroup,SIGNAL(currentIndexChanged ( int )),this,SLOT(selectedPlanGroup(int)));
-			connect(ui_.btn_SendCartParams,SIGNAL(clicked()),this,SLOT(setCartesianImpedanceParamsUI()));
-			connect(ui_.btn_setFT,SIGNAL(clicked()),this,SLOT(setCartesianFTParamsUI()));
+			connect(ui_.btn_moveToHome, SIGNAL(clicked()),this, SLOT(moveToHomeFromUI()));
+			connect(ui_.combo_planGroup, SIGNAL(currentIndexChanged(int)), this,SLOT(selectedPlanGroup(int)));
+			connect(ui_.btn_SendCartParams, SIGNAL(clicked()), this, SLOT(setCartesianImpedanceParamsUI()));
+			connect(ui_.btn_setFT, SIGNAL(clicked()), this, SLOT(setCartesianFTParamsUI()));
 
 			// see if the user want to have cartesian impedance
-			connect(ui_.chk_CartImpedance , SIGNAL(stateChanged(int)),this,SLOT(withCartImpedanceStateChanged(int)));
+			connect(ui_.chk_CartImpedance , SIGNAL(stateChanged(int)), this, SLOT(withCartImpedanceStateChanged(int)));
 			// see if the user want to have cartesian impedance
-			connect(ui_.chk_EnableFT , SIGNAL(stateChanged(int)),this,SLOT(withFTControl(int)));
+			connect(ui_.chk_EnableFT , SIGNAL(stateChanged(int)), this, SLOT(withFTControl(int)));
 
 			//see check the status of each checkbox for enabling F/T or Cartesian Impedance
 			if(ui_.chk_CartImpedance->isChecked()) {
@@ -160,8 +162,10 @@ namespace moveit_cartesian_plan_plugin
 
 		void PathPlanningWidget::sendCartTrajectoryParamsFromUI()
 		{
-			/*! This function takes care of sending the User Entered parameters from the RQT to the Cartesian Path Planner.
-			*/
+			/**
+			 * This function takes care of sending the User Entered parameters from the RQT to the Cartesian Path Planner.
+			 */
+
 			double plan_time_,cart_step_size_,cart_jump_thresh_;
 			bool moveit_replan_,avoid_collisions_;
 
@@ -178,9 +182,10 @@ namespace moveit_cartesian_plan_plugin
 
 		void PathPlanningWidget::initTreeView()
 		{
-			/*! Initialize the Qt TreeView and set the initial value of the User Interaction arrow.
+			/**
+			 * Initialize the Qt TreeView and set the initial value of the User Interaction arrow.
+			 */
 
-			*/
 			QAbstractItemModel *model = ui_.treeView->model();
 
 			//model->setData(model->index(0,0,QModelIndex()),QVariant("add_point_button"),Qt::EditRole);
@@ -194,9 +199,10 @@ namespace moveit_cartesian_plan_plugin
 
 		void PathPlanningWidget::selectedPoint(const QModelIndex& current, const QModelIndex& previous)
 		{
-			/*! Get the selected point from the TreeView.
-				This is used for updating the information of the lineEdit which informs gives the number of the currently selected Way-Point.
-			*/
+			/**
+			 * Get the selected point from the TreeView.
+			 * This is used for updating the information of the lineEdit which informs gives the number of the currently selected Way-Point.
+			 */
 
 			QModelIndex parent = current ;
 			while (parent.parent() != QModelIndex()) {
@@ -210,10 +216,11 @@ namespace moveit_cartesian_plan_plugin
 
 		void PathPlanningWidget::on_btnAddPoint_clicked()
 		{
-			/*! Function for adding new Way-Point from the RQT Widget.
-			The user can set the position and orientation of the Way-Point by entering their values in the LineEdit fields.
-			This function is connected to the AddPoint button click() signal and sends the addPoint(point_pos) to inform the RViz enviroment that a new Way-Point has been added.
-			*/
+			/**
+			 * Function for adding new Way-Point from the RQT Widget.
+			 * The user can set the position and orientation of the Way-Point by entering their values in the LineEdit fields.
+			 * This function is connected to the AddPoint button click() signal and sends the addPoint(point_pos) to inform the RViz enviroment that a new Way-Point has been added.
+			 */
 
 			ROS_INFO_STREAM("Add point button clicked");
 
@@ -362,9 +369,11 @@ namespace moveit_cartesian_plan_plugin
 
 		void PathPlanningWidget::removeRow(int index)
 		{
-			/*! When the user deletes certain Way-Point either from the RViz or the RQT Widget the TreeView needs to
+			/**
+			 * When the user deletes certain Way-Point either from the RViz or the RQT Widget the TreeView needs to
 			 *  delete that particular row and update the state of the TreeWidget.
-			*/
+			 */
+
 			QAbstractItemModel *model = ui_.treeView->model();
 
 			ROS_INFO_STREAM("Deleting point at index: "<< index<<" (name: "<<getWaypointName(index)<<")") ;
@@ -384,7 +393,8 @@ namespace moveit_cartesian_plan_plugin
 			/**
 			 * When the user updates the position of the Way-Point or the User Interactive Marker, the information in
 			 * the TreeView also needs to be updated to correspond to the current pose of the InteractiveMarkers.
-			*/
+			 */
+
 			QAbstractItemModel *model = ui_.treeView->model();
 
 			tf::Vector3 p = waypoint.pose_.getOrigin();
@@ -482,19 +492,23 @@ namespace moveit_cartesian_plan_plugin
 
 		void PathPlanningWidget::parseWayPointBtn_slot()
 		{
-			/*! Letting know the Cartesian Path Planner Class that the user has pressed the Execute Cartesian Path
-			 *  button.
-			*/
+			/**
+			 * Letting know the Cartesian Path Planner Class that the user has pressed the Execute Cartesian Path
+			 * button.
+			 */
+
 			Q_EMIT parseWayPointBtn_signal();
 		}
 
 		void PathPlanningWidget::loadPointsFromFile()
 		{
-			/*! Slot that takes care of opening a previously saved Way-Points yaml file.
-			 *  Opens Qt Dialog for selecting the file, opens the file and parses the data.
-			 *  After reading and parsing the data from the file, the information regarding the pose of the Way-Points
-			 *  is send to the RQT and the RViz so they can update their enviroments.
-			*/
+			/**
+			 * Slot that takes care of opening a previously saved Way-Points yaml file.
+			 * Opens Qt Dialog for selecting the file, opens the file and parses the data.
+			 * After reading and parsing the data from the file, the information regarding the pose of the Way-Points
+			 * is send to the RQT and the RViz so they can update their enviroments.
+			 */
+
 			QString fileName = QFileDialog::getOpenFileName(this,
 															tr("Open Way Points File"), "",
 															tr("Way Points (*.yaml);;All Files (*)"));
@@ -536,9 +550,9 @@ namespace moveit_cartesian_plan_plugin
 
 					double x,y,z,rx, ry, rz;
 					name = doc[i]["name"].as<std::string>();
-					x = doc[i]["point"][0].as<double>();
-					y = doc[i]["point"][1].as<double>();
-					z = doc[i]["point"][2].as<double>();
+					x  = doc[i]["point"][0].as<double>();
+					y  = doc[i]["point"][1].as<double>();
+					z  = doc[i]["point"][2].as<double>();
 					rx = doc[i]["point"][3].as<double>();
 					ry = doc[i]["point"][4].as<double>();
 					rz = doc[i]["point"][5].as<double>();
@@ -778,6 +792,9 @@ namespace moveit_cartesian_plan_plugin
 			}
 
 			swapWaypoints_signal(selected_waypoint_, selected_waypoint_-1) ;
+
+			selected_waypoint_-- ;
+			ui_.treeView->selectionModel()->select (ui_.treeView->model()->index(selected_waypoint_,0), QItemSelectionModel::SelectCurrent);
 		}
 
 		void PathPlanningWidget::on_moveWaypointDownButton_clicked() {
@@ -789,6 +806,9 @@ namespace moveit_cartesian_plan_plugin
 			}
 
 			swapWaypoints_signal(selected_waypoint_, selected_waypoint_+1) ;
+
+			selected_waypoint_++ ;
+			ui_.treeView->selectionModel()->select (ui_.treeView->model()->index(selected_waypoint_,0), QItemSelectionModel::SelectCurrent);
 		}
 	}
 }
