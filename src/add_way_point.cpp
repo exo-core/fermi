@@ -75,46 +75,34 @@ void AddWayPoint::onInitialize()
     menu_handler_.insert( "Delete", boost::bind( &AddWayPoint::processFeedback, this, _1 ) );
     menu_handler_.setCheckState(menu_handler_.insert( "Fine adjustment", boost::bind( &AddWayPoint::processFeedback, this, _1 )),interactive_markers::MenuHandler::UNCHECKED);
 
-    connect(path_generate_,SIGNAL(getRobotModelFrame_signal(const std::string, const tf::Transform)),this,SLOT(getRobotModelFrame_slot(const std::string, const tf::Transform)));
+	connect(this, SIGNAL(wayPoints_signal(std::vector<geometry_msgs::Pose>)),path_generate_,SLOT(cartesianPathHandler(std::vector<geometry_msgs::Pose>)));
+	connect(this, SIGNAL(addPointRViz(const Waypoint&,const int)), widget_, SLOT(insertRow(const Waypoint&,const int)));
+	connect(this, SIGNAL(pointPoseUpdatedRViz(const Waypoint&,const int)), widget_, SLOT(pointPosUpdated_slot(const Waypoint&,const int)));
+	connect(this, SIGNAL(pointDeleteRviz(int)),widget_,SLOT(removeRow(int)));
+	connect(this, SIGNAL(onUpdatePosCheckIkValidity(const geometry_msgs::Pose&, const int)),path_generate_,SLOT(checkWayPointValidity(const geometry_msgs::Pose&, const int)));
 
-    connect(path_generate_,SIGNAL(getRobotModelFrame_signal(const std::string, const tf::Transform)),widget_,SLOT(setAddPointUIStartPos(const std::string, const tf::Transform)));
+	connect(widget_, SIGNAL(addPoint(Waypoint)),this,SLOT( addPointFromUI(Waypoint)));
+	connect(widget_, SIGNAL(pointDeleteUI_signal(int)), this, SLOT(pointDeleted(int)));
+	connect(widget_, SIGNAL(pointPosUpdated_signal(const Waypoint&, const int)), this, SLOT(waypointUpdated(const Waypoint&, const int)));
 
-	connect(path_generate_,SIGNAL(updateCurrentPosition_signal(const std::string, const tf::Transform)),widget_,SLOT(updateCurrentPositionDisplay(const std::string, const tf::Transform)));
+	connect(widget_, SIGNAL(cartesianPathParamsFromUI_signal(double, double, double, bool, bool )), path_generate_, SLOT(setCartParams(double, double, double, bool, bool)));
+	connect(widget_, SIGNAL(moveToPose_signal(geometry_msgs::Pose)), path_generate_, SLOT(moveToPose(geometry_msgs::Pose)));
+	connect(widget_, SIGNAL(moveToHomeFromUI_signal()), path_generate_, SLOT(moveToHome()));
+	connect(widget_, SIGNAL(parseWayPointBtn_signal()), this, SLOT(parseWayPoints()));
+	connect(widget_, SIGNAL(saveToFileBtn_press()), this, SLOT(saveWayPointsToFile()));
+	connect(widget_, SIGNAL(swapWaypoints_signal(const int, const int)), this, SLOT(swapWaypoints(const int, const int)));
+	connect(widget_, SIGNAL(clearAllPoints_signal()), this, SLOT(clearAllPointsRViz()));
+	connect(widget_, SIGNAL(sendSendSelectedPlanGroup(int)), path_generate_, SLOT(getSelectedGroupIndex(int)));
 
-    connect(widget_, SIGNAL(addPoint(Waypoint)),this,SLOT( addPointFromUI(Waypoint)));
-    connect(widget_, SIGNAL(pointDeleteUI_signal(int)), this, SLOT(pointDeleted(int)));
-    connect(this,    SIGNAL(addPointRViz(const Waypoint&,const int)),widget_,SLOT(insertRow(const Waypoint&,const int)));
-    connect(this,    SIGNAL(pointPoseUpdatedRViz(const Waypoint&,const char*)),widget_,SLOT(pointPosUpdated_slot(const Waypoint&,const char*)));
-    connect(widget_, SIGNAL(pointPosUpdated_signal(const Waypoint&,const int)),this,SLOT(waypointUpdated(const Waypoint&,const int)));
-    connect(this,    SIGNAL(pointDeleteRviz(int)),widget_,SLOT(removeRow(int)));
-
-    connect(widget_, SIGNAL(cartesianPathParamsFromUI_signal(double, double, double, bool, bool )),path_generate_,SLOT(setCartParams(double, double, double, bool, bool)));
-
-	connect(widget_, SIGNAL(moveToPose_signal(geometry_msgs::Pose)),path_generate_,SLOT(moveToPose(geometry_msgs::Pose)));
-	//connect(path_generate_,SIGNAL(moveToPose_signal(geometry_msgs::Pose)),path_generate_,SLOT(moveToPose(geometry_msgs::Pose)));
-    connect(widget_, SIGNAL(moveToHomeFromUI_signal()),path_generate_,SLOT(moveToHome()));
-
-    connect(widget_, SIGNAL(parseWayPointBtn_signal()),this,SLOT(parseWayPoints()));
-    connect(this,    SIGNAL(wayPoints_signal(std::vector<geometry_msgs::Pose>)),path_generate_,SLOT(cartesianPathHandler(std::vector<geometry_msgs::Pose>)));
-    connect(widget_, SIGNAL(saveToFileBtn_press()),this,SLOT(saveWayPointsToFile()));
-	connect(widget_, SIGNAL(copyCurrentPoseButton_press()),widget_,SLOT(copyCurrentPose()));
-    connect(widget_, SIGNAL(clearAllPoints_signal()),this,SLOT(clearAllPointsRViz()));
-
-
-
-    connect(path_generate_,SIGNAL(wayPointOutOfIK(int,int)),this,SLOT(wayPointOutOfIK_slot(int,int)));
-    connect(this,SIGNAL(onUpdatePosCheckIkValidity(const geometry_msgs::Pose&, const int)),path_generate_,SLOT(checkWayPointValidity(const geometry_msgs::Pose&, const int)));
-
-    connect(path_generate_,SIGNAL(cartesianPathExecuteStarted()),widget_,SLOT(cartesianPathStartedHandler()));
-    connect(path_generate_,SIGNAL(cartesianPathExecuteFinished()),widget_,SLOT(cartesianPathFinishedHandler()));
-
-    connect(path_generate_,SIGNAL(cartesianPathCompleted(double)),widget_,SLOT(cartPathCompleted_slot(double )));
-
-    connect(path_generate_, SIGNAL(sendCartPlanGroup(std::vector< std::string >)),widget_,SLOT(getCartPlanGroup(std::vector< std::string >)));
-
-    connect(widget_,SIGNAL(sendSendSelectedPlanGroup(int)),path_generate_,SLOT(getSelectedGroupIndex(int)));
-
-
+	connect(path_generate_, SIGNAL(getRobotModelFrame_signal(const std::string, const tf::Transform)),this,SLOT(getRobotModelFrame_slot(const std::string, const tf::Transform)));
+	connect(path_generate_, SIGNAL(getRobotModelFrame_signal(const std::string, const tf::Transform)),widget_,SLOT(setAddPointUIStartPos(const std::string, const tf::Transform)));
+	connect(path_generate_, SIGNAL(updateCurrentPosition_signal(const std::string, const tf::Transform)),widget_,SLOT(updateCurrentPositionDisplay(const std::string, const tf::Transform)));
+	//connect(path_generate_, SIGNAL(moveToPose_signal(geometry_msgs::Pose)),path_generate_,SLOT(moveToPose(geometry_msgs::Pose)));
+	connect(path_generate_, SIGNAL(wayPointOutOfIK(int,int)),this,SLOT(wayPointOutOfIK_slot(int,int)));
+	connect(path_generate_, SIGNAL(cartesianPathExecuteStarted()),widget_,SLOT(cartesianPathStartedHandler()));
+	connect(path_generate_, SIGNAL(cartesianPathExecuteFinished()),widget_,SLOT(cartesianPathFinishedHandler()));
+	connect(path_generate_, SIGNAL(cartesianPathCompleted(double)),widget_,SLOT(cartPathCompleted_slot(double )));
+	connect(path_generate_, SIGNAL(sendCartPlanGroup(std::vector< std::string >)),widget_,SLOT(getCartPlanGroup(std::vector< std::string >)));
 
     connect(this,SIGNAL(initRviz()),path_generate_,SLOT(initRvizDone()));
     /*!  With the signal initRviz() we call a function GenerateCartesianPath::initRvizDone() which sets the initial parameters of the MoveIt enviroment.
@@ -127,8 +115,6 @@ void AddWayPoint::onInitialize()
     connect(widget_,SIGNAL(setCartesianFTParamsUI_signal(cartesian_impedance_msgs::SetCartesianForceCtrlPtr)),set_cart_ft_params_,SLOT(sendCartFTParams(cartesian_impedance_msgs::SetCartesianForceCtrlPtr)));
 
     ROS_INFO("ready.");
-
-
 }
 
 void AddWayPoint::load(const rviz::Config& config)
@@ -154,10 +140,22 @@ void AddWayPoint::save(rviz::Config config) const
   config.mapSetValue("TextEntry",QString::fromStdString( std::string("test_field")));
 }
 
+void AddWayPoint::swapWaypoints(const int index1, const int index2) {
+	ROS_INFO_STREAM("Swapping waypoints "<<index1<<" and "<<index2);
+
+	Waypoint tmp = waypoints_[index1] ;
+	waypoints_[index1] = waypoints_[index2];
+	waypoints_[index2] = tmp ;
+
+	pointPoseUpdatedRViz(waypoints_[index1], index1);
+	pointPoseUpdatedRViz(waypoints_[index2], index2);
+}
+
 void AddWayPoint::addPointFromUI(const Waypoint point_pos)
 {
-	/*! Function for handling the signal of the RQT to add a new Way-Point in the RViz enviroment.
-	*/
+	/**
+	 * Function for handling the signal of the RQT to add a new Way-Point in the RViz enviroment.
+	 */
 	ROS_INFO("Point Added");
 	waypoints_.push_back(point_pos);
 	Q_EMIT addPointRViz(point_pos, count_);
@@ -168,12 +166,13 @@ void AddWayPoint::addPointFromUI(const Waypoint point_pos)
 
 void AddWayPoint::processFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback )
 {
-  /*! This function is one of the most essential ones since it handles the events of the InteractiveMarkers from the User in the RViz Enviroment.
-      In this function we have handlers for all the necessary events of the User Interaction with the InteractiveMarkers.
-      When the user clicks on the User Interactive Arrow, it acts as button and adds new Way-Point in the RViz enviroment.
-      When the User changes the pose of an InteractiveMarker from the RViz enviroment the position of the InteractiveMarker is updated synchronously in the RViz enviroment and in the RQT Widget.
-      The Menu handlers take care of the User selected items from the menu of the Way-Point and call the necessary functions to change their state depending on the item selected from the menu.
-  */
+  /**
+   * This function is one of the most essential ones since it handles the events of the InteractiveMarkers from the User in the RViz Enviroment.
+   * In this function we have handlers for all the necessary events of the User Interaction with the InteractiveMarkers.
+   * When the user clicks on the User Interactive Arrow, it acts as button and adds new Way-Point in the RViz enviroment.
+   * When the User changes the pose of an InteractiveMarker from the RViz enviroment the position of the InteractiveMarker is updated synchronously in the RViz enviroment and in the RQT Widget.
+   * The Menu handlers take care of the User selected items from the menu of the Way-Point and call the necessary functions to change their state depending on the item selected from the menu.
+   */
   switch ( feedback->event_type )
   {
     case visualization_msgs::InteractiveMarkerFeedback::BUTTON_CLICK:
@@ -201,7 +200,7 @@ void AddWayPoint::processFeedback( const visualization_msgs::InteractiveMarkerFe
 
 		waypointUpdated(point_pos, index);
 
-		Q_EMIT pointPoseUpdatedRViz(point_pos, feedback->marker_name.c_str());
+		Q_EMIT pointPoseUpdatedRViz(point_pos, index);
 
 		break;
     }
@@ -258,6 +257,12 @@ void AddWayPoint::waypointUpdated(const Waypoint &point_pos, const int index)
 	geometry_msgs::Pose pose;
 	tf::poseTFToMsg(point_pos.pose_, pose);
 	std::stringstream s;
+
+	ROS_INFO_STREAM(
+			"Updating waypoint "<<index<<" to "
+			<<"["<<point_pos.pose_.getOrigin().x()<<", "<<point_pos.pose_.getOrigin().y()<<", "<<point_pos.pose_.getOrigin().z()<<"], "
+			<<"["<<point_pos.pose_.getRotation().x()<<", "<<point_pos.pose_.getRotation().y()<<", "<<point_pos.pose_.getRotation().z()<<"], "
+	) ;
 
 	waypoints_[index] = point_pos;
 

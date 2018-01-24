@@ -1,6 +1,7 @@
 #include <QStringList>
 
- #include <moveit_cartesian_plan_plugin/point_tree_item.h>
+#include <moveit_cartesian_plan_plugin/point_tree_item.h>
+#include <ros/ros.h>
 
 PointTreeItem::PointTreeItem(const QVector<QVariant> &data, PointTreeItem *parent)
 {
@@ -111,9 +112,22 @@ bool PointTreeItem::removeColumns(int position, int columns)
 
 bool PointTreeItem::setData(int column, const QVariant &value)
 {
-     if (column < 0 || column >= itemData.size())
-         return false;
+	if (column < 0 || column >= itemData.size()) {
+		return false;
+	}
 
-     itemData[column] = value;
-     return true;
+	//ROS_INFO("value changed");
+	itemData[column] = value;
+
+	emitItemValueChangedSignal(*this, column, value);
+
+	return true;
+}
+
+void PointTreeItem::emitItemValueChangedSignal(PointTreeItem &item, const int column, const QVariant &value) {
+	itemValueChanged(item, column, value);
+
+    if (parentItem) {
+		parentItem->emitItemValueChangedSignal(item, column, value);
+    }
 }

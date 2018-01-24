@@ -19,6 +19,15 @@ namespace moveit_cartesian_plan_plugin {
 		return name_ == other.name_ && pose_ == other.pose_ ;
 	}
 
+	Waypoint& Waypoint::operator=(const Waypoint& other) {
+		if (&other == this) {
+			return *this;
+		}
+
+		this->name_ = other.name_ ;
+		this->pose_ = other.pose_ ;
+	}
+
 	Waypoint::~Waypoint() {
 	}
 }

@@ -68,22 +68,22 @@ namespace moveit_cartesian_plan_plugin
 		{
 		Q_OBJECT
 		public:
-			//! RQT Widget Constructor.
+			/// RQT Widget Constructor.
 			PathPlanningWidget(std::string ns="");
-			//! Virtual RQT Widget Destructor.
+			/// Virtual RQT Widget Destructor.
 			virtual ~PathPlanningWidget();
-			//! set the name of the RQT Widget.
+			/// set the name of the RQT Widget.
 		    std::string get_name()
 			{
 				return "RobotPathPlanner";
 			}
 		protected:
-			//! Widget Initialization.
+			/// Widget Initialization.
 			void init();
 			std::string param_ns_;
-			//! Protected variable for the Qt UI to access the Qt UI components.
+			/// Protected variable for the Qt UI to access the Qt UI components.
 			Ui::PathPlanningWidget ui_;
-			//! Definition of an abstract data model.
+			/// Definition of an abstract data model.
 			QStandardItemModel* pointDataModel;
 
 		private:
@@ -92,59 +92,59 @@ namespace moveit_cartesian_plan_plugin
 			int selected_waypoint_ ;
 
 		protected Q_SLOTS:
-			//! Initialize the TreeView with the User Interactive Marker.
+			/// Initialize the TreeView with the User Interactive Marker.
 			void initTreeView();
-			//! Handle the event of a Way-Point deleted from the RQT UI.
+			/// Handle the event of a Way-Point deleted from the RQT UI.
 			void on_deleteWaypointButton_clicked();
-			//! Handle the event of a Way-Point added from the RQT UI.
+			/// Handle the event of a Way-Point added from the RQT UI.
 			void on_btnAddPoint_clicked();
-			//! Insert a row in the TreeView.
+			/// Insert a row in the TreeView.
 			void insertRow(const Waypoint& point_pos,const int count);
-			//! Remove a row in the TreeView.
+			/// Remove a row in the TreeView.
 			void removeRow(int index);
-			//! Handle the event when a User updates the pose of a Way-Point through the RQT UI.
-			void pointPosUpdated_slot( const Waypoint& point_pos, const char* marker_name);
-			//! Get the selected Way-Point from the RQT UI.
+			/// Handle the event when a User updates the pose of a Way-Point through the RQT UI.
+			void pointPosUpdated_slot( const Waypoint& waypoint, const int index);
+			/// Get the selected Way-Point from the RQT UI.
 			void selectedPoint(const QModelIndex& current, const QModelIndex& previous);
-			//! Handle the even when the data in the TreeView has been changed.
-			void treeViewDataChanged(const QModelIndex &index,const QModelIndex &index2);
-			//! Slot for parsing the Way-Points and notifying the MoveIt.
+			/// Handle the even when the data in the TreeView has been changed.
+			void treeViewDataChanged(const QModelIndex& item, const QVariant& value);
+			/// Slot for parsing the Way-Points and notifying the MoveIt.
 			void parseWayPointBtn_slot();
-			//! Send a signal that a save the Way-Points to a file button has been pressed.
+			/// Send a signal that a save the Way-Points to a file button has been pressed.
 			void savePointsToFile();
-			//! Send a signal that a load the Way-Points from a file button has been pressed.
+			/// Send a signal that a load the Way-Points from a file button has been pressed.
 			void loadPointsFromFile();
-			//! Slot connected to a clear all points button click.
+			/// Slot connected to a clear all points button click.
 			void clearAllPoints_slot();
-			//! Set the start pose of the User Interactive Marker to correspond to the loaded robot base frame.
+			/// Set the start pose of the User Interactive Marker to correspond to the loaded robot base frame.
 			void setAddPointUIStartPos(const std::string robot_model_frame,const tf::Transform end_effector);
 			void updateCurrentPositionDisplay(const std::string, const tf::Transform end_effector);
-			//! Slot for disabling the TabWidged while Cartesian Path is executed.
+			/// Slot for disabling the TabWidged while Cartesian Path is executed.
 			void cartesianPathStartedHandler();
-			//! Slot for enabling the TabWidged after Cartesian Path is executed.
+			/// Slot for enabling the TabWidged after Cartesian Path is executed.
 			void cartesianPathFinishedHandler();
-			//! Send the Cartesian and MoveIt parameters to the Cartesian Path Planning class.
+			/// Send the Cartesian and MoveIt parameters to the Cartesian Path Planning class.
 			void sendCartTrajectoryParamsFromUI();
-			//! Set a label in the RQT to inform the user of the percantage of completion of the Cartesian plan.
+			/// Set a label in the RQT to inform the user of the percantage of completion of the Cartesian plan.
 			void cartPathCompleted_slot(double fraction);
-			//update the point in the RQT by using separate thread
+			// update the point in the RQT by using separate thread
 			// void pointPosUpdatedHandler_slot(const tf::Transform& point_pos, const char* marker_name);
 
-			//! Set the planning group ComboBox
+			/// Set the planning group ComboBox
 			void getCartPlanGroup(std::vector< std::string > group_names);
 
 			void selectedPlanGroup(int index);
 
-			//! Create a slot to call a signal on which the Move the robot to home position function is called
+			/// Create a slot to call a signal on which the Move the robot to home position function is called
 			void moveToHomeFromUI();
-			// set the read the Cartesian Impedance parameters from the UI and send them to the designated topic.
+			/// set the read the Cartesian Impedance parameters from the UI and send them to the designated topic.
 			void setCartesianImpedanceParamsUI();
-			// set the read the Cartesian Force parameters from the UI and send them to the designated topic.
+			/// set the read the Cartesian Force parameters from the UI and send them to the designated topic.
 			void setCartesianFTParamsUI();
-			//! Check if the user wants to have cartesian Impedance enabled (check if depreciated)
+			/// Check if the user wants to have cartesian Impedance enabled (check if depreciated)
 			void withCartImpedanceStateChanged(int state);
 
-			//! Check if the user wants to have F/T control from the UI
+			/// Check if the user wants to have F/T control from the UI
 			void withFTControl(int state);
 
 			void on_copyCurrentPoseButton_clicked();
@@ -152,33 +152,38 @@ namespace moveit_cartesian_plan_plugin
 			void on_moveToNewPositionButton_clicked();
 			void on_moveToWaypointButton_clicked();
 
+			void on_moveWaypointUpButton_clicked();
+			void on_moveWaypointDownButton_clicked();
+
 		Q_SIGNALS:
-			//! Notify RViz enviroment that a new Way-Point has been added from RQT.
+			/// Notify RViz enviroment that a new Way-Point has been added from RQT.
 		    void addPoint( const Waypoint point_pos );
-		    //! Notify RViz enviroment that a new Way-Point has been deleted from RQT.
+		    /// Notify RViz enviroment that a new Way-Point has been deleted from RQT.
 		    void pointDeleteUI_signal(int index);
-		    //! Notify RViz enviroment that a new Way-Point has been modified from RQT.
-		    void pointPosUpdated_signal( const Waypoint& position, const int index);
-		    //! Signal to notify the Cartesian Path Planning Class that an Execute Cartesian Plan button has been pressed.
+		    /// Notify RViz enviroment that a new Way-Point has been modified from RQT.
+		    void pointPosUpdated_signal(const Waypoint& position, const int index);
+			/// Signal that a waypoint has been moved up or down in the tree view
+			void swapWaypoints_signal(const int index1, const int index2);
+		    /// Signal to notify the Cartesian Path Planning Class that an Execute Cartesian Plan button has been pressed.
 		    void parseWayPointBtn_signal();
-		    //! Save to file button has been pressed.
+		    /// Save to file button has been pressed.
 		    void saveToFileBtn_press();
-			//! Copy current pose button has been pressed.
+			/// Copy current pose button has been pressed.
 			void copyCurrentPoseButton_press();
-		    //! Signal that clear all points button has been pressed.
+		    /// Signal that clear all points button has been pressed.
 		    void clearAllPoints_signal();
-		    //! Signal that the Cartesian Plan execution button has been pressed.
+		    /// Signal that the Cartesian Plan execution button has been pressed.
 		    void cartesianPathParamsFromUI_signal(double plan_time_,double cart_step_size_, double cart_jump_thresh_, bool moveit_replan_,bool avoid_collisions_);
 
-		    //! On this signal we will call the function for which will execute the MoveIt command to bring the robot in its initial state.
+		    /// On this signal we will call the function for which will execute the MoveIt command to bring the robot in its initial state.
 		    void moveToHomeFromUI_signal();
 
 			void moveToPose_signal(geometry_msgs::Pose);
 
 			void sendSendSelectedPlanGroup(int index);
-			//signaling the Qt that the Impedance params have changed via the UI
+			/// signaling the Qt that the Impedance params have changed via the UI
 			void setCartesianImpedanceParamsUI_signal(cartesian_impedance_msgs::SetCartesianImpedancePtr cart_impedance_params);
-			//signaling the Qt that the Force params have changed via the UI
+			/// signaling the Qt that the Force params have changed via the UI
 			void setCartesianFTParamsUI_signal(cartesian_impedance_msgs::SetCartesianForceCtrlPtr cart_ft_params);
 		};
 	}

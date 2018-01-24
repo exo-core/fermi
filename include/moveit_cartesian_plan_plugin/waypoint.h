@@ -15,6 +15,7 @@ namespace moveit_cartesian_plan_plugin {
 			Waypoint(const std::string& name, const tf::Transform& pose) ;
 			virtual ~Waypoint() ;
 
+			Waypoint& operator=(const Waypoint& other) ;
 			bool operator ==(const Waypoint &other) const;
 
 			std::string name_;

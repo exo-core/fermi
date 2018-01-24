@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>428</width>
-    <height>933</height>
+    <height>968</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -136,7 +136,7 @@
        <item>
         <layout class="QGridLayout" name="gridLayout_7" columnstretch="48,4,48">
          <item row="1" column="2">
-          <widget class="QPushButton" name="pushButton">
+          <widget class="QPushButton" name="moveWaypointUpButton">
            <property name="toolTip">
             <string>Move selected waypoint up</string>
            </property>
@@ -156,7 +156,7 @@
           </widget>
          </item>
          <item row="2" column="2">
-          <widget class="QPushButton" name="pushButton_2">
+          <widget class="QPushButton" name="moveWaypointDownButton">
            <property name="toolTip">
             <string>Move selected waypoint down</string>
            </property>

@@ -33,6 +33,12 @@ class PointTreeModel : public QAbstractItemModel {
 		bool insertRows(int position, int rows, const QModelIndex &parent = QModelIndex());
 		bool removeRows(int position, int rows, const QModelIndex &parent = QModelIndex());
 
+	Q_SIGNALS:
+		void itemValueChanged(const QModelIndex&, const QVariant& value);
+
+	protected Q_SLOTS:
+		void treeItemValueChanged(PointTreeItem &item, const int column, const QVariant &value);
+
 	private:
 		void setupModelData(const QStringList &lines, PointTreeItem *parent);
 		PointTreeItem *getItem(const QModelIndex &index) const;

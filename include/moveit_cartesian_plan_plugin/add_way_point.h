@@ -83,17 +83,13 @@ namespace moveit_cartesian_plan_plugin {
 			//! User Interaction Arrow Marker
 			virtual void makeInteractiveMarker();
 
-		protected Q_SLOTS:
-			//! rviz::Panel virtual functions for loading Panel Configuration.
-			virtual void load(const rviz::Config& config);
-			//! rviz::Panel virtual functions for saving Panel Configuration.
-			virtual void save(rviz::Config config) const;
-
 		public Q_SLOTS:
 			//! Slot for handling the event of way-point deletion.
 			virtual void pointDeleted(int index);
 			//! Slot for handling the add way-point event from the RQT UI.
 			void addPointFromUI(const Waypoint point_pos);
+			//! Slot for swapping the order of two waypoints
+			void swapWaypoints(const int index1, const int index2);
 			//! Slot for handling when the user updates the position of the Interactive Markers.
 			void waypointUpdated(const Waypoint &point_pos, const int index);
 			//! Slot for parsing the Way-Points before sending them to the MoveIt class.
@@ -103,9 +99,15 @@ namespace moveit_cartesian_plan_plugin {
 			//! Clear all the Way-Points
 			void clearAllPointsRViz();
 			//! Slot for handling the even when a way-point is out of the IK solution of the loaded robot.
-			void wayPointOutOfIK_slot(int point_number,int out);
+			void wayPointOutOfIK_slot(int point_number, int out);
 			//! Get the name of the Transformation frame of the Robot.
-			void getRobotModelFrame_slot(const std::string robot_model_frame,const tf::Transform end_effector);
+			void getRobotModelFrame_slot(const std::string robot_model_frame, const tf::Transform end_effector);
+
+		protected Q_SLOTS:
+			//! rviz::Panel virtual functions for loading Panel Configuration.
+			virtual void load(const rviz::Config& config);
+			//! rviz::Panel virtual functions for saving Panel Configuration.
+			virtual void save(rviz::Config config) const;
 
 		Q_SIGNALS:
 			//! Signal for notifying that RViz is done with initialization.
@@ -115,7 +117,7 @@ namespace moveit_cartesian_plan_plugin {
 			//! Signal for notifying that a way-point has been added from the RViz enviroment.
 			void addPointRViz(const Waypoint& point_pos, const int count);
 			//! Signal that the way-point position has been updated by the user from the RViz enviroment.
-			void pointPoseUpdatedRViz(const Waypoint& point_pos, const char* marker_name);
+			void pointPoseUpdatedRViz(const Waypoint& point_pos, const int index);
 			//! Signal for sending all the Way-Points.
 			void wayPoints_signal(std::vector<geometry_msgs::Pose> waypoints);
 			//! Signal to check if the way-point is in valid IK solution.
