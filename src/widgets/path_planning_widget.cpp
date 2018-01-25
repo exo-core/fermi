@@ -415,24 +415,26 @@ namespace moveit_cartesian_plan_plugin
 			QString orient_y = QString::number(ry);
 			QString orient_z = QString::number(rz);
 
-			//*********************** update the positions and orientations of the children as well ********************
-
-			// prevent Tree Model from sending new events while being updated
+			// get indices of tree items
 			QModelIndex parent_index = model->index(index, 0);
 			QModelIndex child_index_pos = model->index(0, 0, parent_index);
 			QModelIndex child_index_orient = model->index(1, 0, parent_index);
 
 			{
+				//********************* update the positions and orientations of the children as well ******************
+
+				// prevent Tree Model from sending new events while being updated
 				const QSignalBlocker blocker(model);
 
+				// set waypoint name
 				model->setData(parent_index, QVariant(waypoint.name_.c_str()), Qt::EditRole);
 
-				//second we add the current position information, for each position axis separately
+				// second we add the current position information, for each position axis separately
 				model->setData(model->index(0, 1, child_index_pos), QVariant(pos_x), Qt::EditRole);
 				model->setData(model->index(1, 1, child_index_pos), QVariant(pos_y), Qt::EditRole);
 				model->setData(model->index(2, 1, child_index_pos), QVariant(pos_z), Qt::EditRole);
 
-				//second we add the current position information, for each position axis separately
+				// second we add the current position information, for each position axis separately
 				model->setData(model->index(0, 2, child_index_orient), QVariant(orient_x), Qt::EditRole);
 				model->setData(model->index(1, 2, child_index_orient), QVariant(orient_y), Qt::EditRole);
 				model->setData(model->index(2, 2, child_index_orient), QVariant(orient_z), Qt::EditRole);
@@ -816,6 +818,27 @@ namespace moveit_cartesian_plan_plugin
 
 			selected_waypoint_++ ;
 			ui_.treeView->selectionModel()->select (ui_.treeView->model()->index(selected_waypoint_,0), QItemSelectionModel::SelectCurrent);
+		}
+
+		void PathPlanningWidget::setNewWaypointInputs(const tf::Transform& pose) {
+			//ROS_INFO_STREAM("set new Waypoints called");
+
+			tf::Vector3 p = pose.getOrigin();
+			tfScalar rx,ry,rz;
+			pose.getBasis().getRPY(rx,ry,rz,1);
+
+			rx = RAD2DEG(rx);
+			ry = RAD2DEG(ry);
+			rz = RAD2DEG(rz);
+
+			// set up the starting values for the lineEdit of the positions
+			ui_.newWaypointX->setValue(p.x());
+			ui_.newWaypointY->setValue(p.y());
+			ui_.newWaypointZ->setValue(p.z());
+			// set up the starting values for the lineEdit of the orientations, in Euler angles
+			ui_.newWaypointRx->setValue(rx);
+			ui_.newWaypointRy->setValue(ry);
+			ui_.newWaypointRz->setValue(rz);
 		}
 	}
 }

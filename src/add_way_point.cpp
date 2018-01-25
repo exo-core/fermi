@@ -86,6 +86,7 @@ namespace moveit_cartesian_plan_plugin
 		connect(this, SIGNAL(pointPoseUpdatedRViz(const Waypoint&,const int)), widget_, SLOT(pointPosUpdated_slot(const Waypoint&,const int)));
 		connect(this, SIGNAL(pointDeleteRviz(int)),widget_,SLOT(removeRow(int)));
 		connect(this, SIGNAL(onUpdatePosCheckIkValidity(const geometry_msgs::Pose&, const int)),path_generate_,SLOT(checkWayPointValidity(const geometry_msgs::Pose&, const int)));
+		connect(this, SIGNAL(previewMarkerPoseUpdated(const tf::Transform&)), widget_, SLOT(setNewWaypointInputs(const tf::Transform&)));
 
 		connect(widget_, SIGNAL(addPoint(Waypoint)),this,SLOT( addPointFromUI(Waypoint)));
 		connect(widget_, SIGNAL(pointDeleteUI_signal(int)), this, SLOT(pointDeleted(int)));
@@ -186,7 +187,7 @@ namespace moveit_cartesian_plan_plugin
 		 * functions to change their state depending on the item selected from the menu.
 		 **/
 
-		ROS_INFO_STREAM("Received input for marker "<<feedback->marker_name);
+		//ROS_INFO_STREAM("Received input for marker "<<feedback->marker_name);
 
 		switch ( feedback->event_type ) {
 			case visualization_msgs::InteractiveMarkerFeedback::BUTTON_CLICK: {
@@ -199,7 +200,13 @@ namespace moveit_cartesian_plan_plugin
 				break;
 			}
 			case visualization_msgs::InteractiveMarkerFeedback::POSE_UPDATE: {
-				if (feedback->marker_name != "preview_pose") {
+				if (feedback->marker_name == "pose_preview") {
+					tf::Transform pose ;
+					tf::poseMsgToTF(feedback->pose, pose);
+
+					Q_EMIT previewMarkerPoseUpdated(pose);
+				}
+				else {
 
 					int index = std::atoi(feedback->marker_name.c_str());
 
@@ -209,6 +216,9 @@ namespace moveit_cartesian_plan_plugin
 
 						waypointUpdated(point_pos, index);
 						Q_EMIT pointPoseUpdatedRViz(point_pos, index);
+					}
+					else {
+						ROS_WARN_STREAM("Received input from invalid marker: "<<feedback->marker_name);
 					}
 				}
 
@@ -539,6 +549,7 @@ namespace moveit_cartesian_plan_plugin
 		//server.reset( new interactive_markers::InteractiveMarkerServer("moveit_cartesian_plan_plugin","",false));
 		InteractiveMarkerControl control_inter_arrow;
 		control_inter_arrow.always_visible = true;
+
 		//********************************** rotate and move around the x-axis *****************************************
 		control_inter_arrow.orientation.w = 1;
 		control_inter_arrow.orientation.x = 1;
@@ -568,7 +579,6 @@ namespace moveit_cartesian_plan_plugin
 		control_inter_arrow.interaction_mode = InteractiveMarkerControl::MOVE_AXIS;
 		msg.controls.push_back( control_inter_arrow );
 		//**************************************************************************************************************
-
 
 		//********************************** rotate and move around the y-axis *****************************************
 		control_inter_arrow.orientation.w = 1;

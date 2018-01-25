@@ -122,6 +122,8 @@ namespace moveit_cartesian_plan_plugin {
 			void wayPoints_signal(std::vector<geometry_msgs::Pose> waypoints);
 			//! Signal to check if the way-point is in valid IK solution.
 			void onUpdatePosCheckIkValidity(const geometry_msgs::Pose& waypoint,const int point_number);
+			//! Interactive pose preview marker has moved
+			void previewMarkerPoseUpdated(const tf::Transform&);
 
 
 		protected:

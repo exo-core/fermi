@@ -155,6 +155,8 @@ namespace moveit_cartesian_plan_plugin
 			void on_moveWaypointUpButton_clicked();
 			void on_moveWaypointDownButton_clicked();
 
+			void setNewWaypointInputs(const tf::Transform& pose);
+
 		Q_SIGNALS:
 			/// Notify RViz enviroment that a new Way-Point has been added from RQT.
 		    void addPoint( const Waypoint point_pos );
