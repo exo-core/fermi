@@ -191,7 +191,7 @@ namespace moveit_cartesian_plan_plugin
 		switch ( feedback->event_type ) {
 			case visualization_msgs::InteractiveMarkerFeedback::BUTTON_CLICK: {
 
-				Waypoint point_pos("BUTTON_CLICK");
+				Waypoint point_pos(feedback->marker_name);
 				tf::poseMsgToTF(feedback->pose,point_pos.pose_);
 				// ROS_INFO_STREAM("on click feedback pose is"<<feedback->pose.position.x<<", "<<feedback->pose.position.y<<", "<<feedback->pose.position.z<<";");
 
@@ -199,20 +199,18 @@ namespace moveit_cartesian_plan_plugin
 				break;
 			}
 			case visualization_msgs::InteractiveMarkerFeedback::POSE_UPDATE: {
-				Waypoint point_pos("POSE_UPDATE");
-				tf::poseMsgToTF(feedback->pose,point_pos.pose_);
+				if (feedback->marker_name != "preview_pose") {
 
-				int index = -1;
-				for (unsigned int i=0; i<waypoints_.size(); i++) {
-					if (waypoints_[i].name_ == feedback->marker_name) {
-						index = i;
-						break;
+					int index = std::atoi(feedback->marker_name.c_str());
+
+					if (0 <= index && index < count_) {
+						Waypoint point_pos(waypoints_[index].name_);
+						tf::poseMsgToTF(feedback->pose,point_pos.pose_);
+
+						waypointUpdated(point_pos, index);
+						Q_EMIT pointPoseUpdatedRViz(point_pos, index);
 					}
 				}
-
-				waypointUpdated(point_pos, index);
-
-				Q_EMIT pointPoseUpdatedRViz(point_pos, index);
 
 				break;
 			}
@@ -398,33 +396,31 @@ namespace moveit_cartesian_plan_plugin
 		 * that a new Way-Point has been added.
 		 */
 
-		InteractiveMarker int_marker;
+		InteractiveMarker interact_marker;
 
 		ROS_INFO_STREAM("Markers frame is: "<< target_frame_);
 
-		int_marker.header.frame_id = target_frame_;
+		interact_marker.header.frame_id = target_frame_;
 
-		ROS_DEBUG_STREAM("Markers has frame id: "<< int_marker.header.frame_id);
+		ROS_DEBUG_STREAM("Markers has frame id: "<< interact_marker.header.frame_id);
 
-		int_marker.scale = INTERACTIVE_MARKER_SCALE_;
+		interact_marker.scale = INTERACTIVE_MARKER_SCALE_;
 
-		tf::poseTFToMsg(point_pos.pose_,int_marker.pose);
+		tf::poseTFToMsg(point_pos.pose_,interact_marker.pose);
 
 		std::vector<Waypoint>::iterator it_pos = std::find((waypoints_.begin()),(waypoints_.end()-1),point_pos);
 
 		//**************************************************************************************************************
-		std::stringstream s;
-		s << count_arrow;
-		ROS_DEBUG("end of make arrow, count is:%d, positions count:%ld",count_,waypoints_.size());
-		int_marker.name = s.str();
-		int_marker.description = point_pos.name_ ;
+		ROS_DEBUG_STREAM("end of make arrow, count is:"<<count_<<" positions count: "<<waypoints_.size());
+		interact_marker.name = std::to_string(count_arrow);
+		interact_marker.description = point_pos.name_ ;
 
-		makeArrowControlDefault(int_marker);
-		server_->insert( int_marker);
-		server_->setCallback( int_marker.name, boost::bind( &AddWayPoint::processFeedback, this, _1 ));
-		menu_handler_.apply(*server_,int_marker.name);
+		makeArrowControlDefault(interact_marker);
+		server_->insert( interact_marker);
+		server_->setCallback( interact_marker.name, boost::bind( &AddWayPoint::processFeedback, this, _1 ));
+		menu_handler_.apply(*server_,interact_marker.name);
 		//server->applyChanges();
-		Q_EMIT onUpdatePosCheckIkValidity(int_marker.pose, count_arrow);
+		Q_EMIT onUpdatePosCheckIkValidity(interact_marker.pose, count_arrow);
 	}
 
 	void AddWayPoint::changeMarkerControlAndPose(std::string marker_name,bool set_control) {
@@ -433,24 +429,24 @@ namespace moveit_cartesian_plan_plugin
 		 * Here the user can change the control either to freely move the Way-Point or get the 6DOF pose control option.
 		 **/
 
-		InteractiveMarker int_marker;
-		server_->get(marker_name, int_marker);
+		InteractiveMarker interact_marker ;
+		server_->get(marker_name, interact_marker);
 
 		if(set_control)
 		{
-			int_marker.controls.clear();
-			makeArrowControlDetails(int_marker);
+			interact_marker.controls.clear();
+			makeArrowControlDetails(interact_marker);
 		}
 		else if(!set_control)
 		{
-			int_marker.controls.clear();
-			makeArrowControlDefault(int_marker);
+			interact_marker.controls.clear();
+			makeArrowControlDefault(interact_marker);
 		}
 
-		server_->insert( int_marker);
-		menu_handler_.apply(*server_,int_marker.name);
-		server_->setCallback( int_marker.name, boost::bind( &AddWayPoint::processFeedback, this, _1 ));
-		Q_EMIT onUpdatePosCheckIkValidity(int_marker.pose,atoi(marker_name.c_str()));
+		server_->insert( interact_marker);
+		menu_handler_.apply(*server_,interact_marker.name);
+		server_->setCallback( interact_marker.name, boost::bind( &AddWayPoint::processFeedback, this, _1 ));
+		Q_EMIT onUpdatePosCheckIkValidity(interact_marker.pose,atoi(marker_name.c_str()));
 
 	}
 
@@ -485,7 +481,7 @@ namespace moveit_cartesian_plan_plugin
 			);
 		}
 
-		//InteractiveMarker int_marker;
+		//InteractiveMarker interact_marker;
 		//server_->erase(std::string(""+index).c_str());
 
 		//for(int i=index+1; i<=count_;i++) {
@@ -508,7 +504,7 @@ namespace moveit_cartesian_plan_plugin
 		server_->applyChanges();
 	}
 
-	Marker AddWayPoint::makeInterArrow( InteractiveMarker &msg )
+	Marker AddWayPoint::makeInteractiveArrow(InteractiveMarker &msg)
 	{
 		/**
 		 * Define the Marker Arrow which the user can add new Way-Points with.
@@ -537,7 +533,7 @@ namespace moveit_cartesian_plan_plugin
 		control_button.always_visible = true;
 		control_button.interaction_mode = InteractiveMarkerControl::BUTTON;
 		control_button.name = "button_interaction";
-		control_button.markers.push_back( makeInterArrow(msg) );
+		control_button.markers.push_back(makeInteractiveArrow(msg) );
 
 		msg.controls.push_back( control_button );
 		//server.reset( new interactive_markers::InteractiveMarkerServer("moveit_cartesian_plan_plugin","",false));
@@ -588,7 +584,7 @@ namespace moveit_cartesian_plan_plugin
 		control_inter_arrow.interaction_mode = InteractiveMarkerControl::MOVE_AXIS;
 		msg.controls.push_back( control_inter_arrow );
 		//**************************************************************************************************************
-		control_inter_arrow.markers.push_back( makeInterArrow(msg) );
+		control_inter_arrow.markers.push_back(makeInteractiveArrow(msg) );
 
 		return msg.controls.back();
 	}
@@ -703,13 +699,13 @@ namespace moveit_cartesian_plan_plugin
 
 	void AddWayPoint::wayPointOutOfIK_slot(int point_number,int out)
 	{
-		InteractiveMarker int_marker;
+		InteractiveMarker interact_marker;
 		visualization_msgs::Marker point_marker;
 		std::stringstream marker_name;
 		marker_name<<point_number;
-		server_->get(marker_name.str(), int_marker);
+		server_->get(marker_name.str(), interact_marker);
 
-		int control_size = int_marker.controls.size();
+		int control_size = interact_marker.controls.size();
 		ROS_DEBUG_STREAM("size of controls for marker: "<<control_size);
 
 		if(control_size == 0) {
@@ -721,13 +717,13 @@ namespace moveit_cartesian_plan_plugin
 
 		if(out == 1) {
 			//make the marker outside the IK solution with yellow color
-			int_marker.controls.at(control_size).markers.at(0).color = WAY_POINT_COLOR_OUTSIDE_IK_;
+			interact_marker.controls.at(control_size).markers.at(0).color = WAY_POINT_COLOR_OUTSIDE_IK_;
 		}
 		else {
-			int_marker.controls.at(control_size).markers.at(0).color = WAY_POINT_COLOR_;
+			interact_marker.controls.at(control_size).markers.at(0).color = WAY_POINT_COLOR_;
 		}
 
-		server_->insert( int_marker);
+		server_->insert( interact_marker);
 	}
 
 	void AddWayPoint::getRobotModelFrame_slot(const std::string robot_model_frame,const tf::Transform end_effector)

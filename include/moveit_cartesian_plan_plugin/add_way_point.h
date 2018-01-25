@@ -138,7 +138,7 @@ namespace moveit_cartesian_plan_plugin {
 			//! Function for creating a way-point marker
 			Marker makeWayPoint( InteractiveMarker &msg );
 			//! Function to create the InteractionArrow Marker
-			Marker makeInterArrow( InteractiveMarker &msg );
+			Marker makeInteractiveArrow(InteractiveMarker &msg);
 			//! Create controls for each different marker. Here we have control for the defaulot starting control ArrowMarkers(the cartesian way points)
 			InteractiveMarkerControl& makeArrowControlDefault(InteractiveMarker &msg );
 			//! 6DOF control for the Ingteractive Markers

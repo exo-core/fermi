@@ -405,17 +405,17 @@ namespace moveit_cartesian_plan_plugin
 			ry = RAD2DEG(ry);
 			rz = RAD2DEG(rz);
 
-			//set the strings of each axis of the position
+			// set the strings of each axis of the position
 			QString pos_x = QString::number(p.x());
 			QString pos_y = QString::number(p.y());
 			QString pos_z = QString::number(p.z());
 
-			//repeat that with the orientation
+			// repeat that with the orientation
 			QString orient_x = QString::number(rx);
 			QString orient_y = QString::number(ry);
 			QString orient_z = QString::number(rz);
 
-			//**********************update the positions and orientations of the children as well*******************
+			//*********************** update the positions and orientations of the children as well ********************
 
 			// prevent Tree Model from sending new events while being updated
 			QModelIndex parent_index = model->index(index, 0);
@@ -425,7 +425,7 @@ namespace moveit_cartesian_plan_plugin
 			{
 				const QSignalBlocker blocker(model);
 
-				model->setData(model->index(index, 0), QVariant(waypoint.name_.c_str()), Qt::EditRole);
+				model->setData(parent_index, QVariant(waypoint.name_.c_str()), Qt::EditRole);
 
 				//second we add the current position information, for each position axis separately
 				model->setData(model->index(0, 1, child_index_pos), QVariant(pos_x), Qt::EditRole);
@@ -442,6 +442,14 @@ namespace moveit_cartesian_plan_plugin
 
 			//ui_.treeView->update();
 			ui_.treeView->update(parent_index);
+
+			ui_.treeView->update(model->index(0, 1, child_index_pos));
+			ui_.treeView->update(model->index(1, 1, child_index_pos));
+			ui_.treeView->update(model->index(2, 1, child_index_pos));
+
+			ui_.treeView->update(model->index(0, 1, child_index_orient));
+			ui_.treeView->update(model->index(1, 1, child_index_orient));
+			ui_.treeView->update(model->index(2, 1, child_index_orient));
 		}
 
 		void PathPlanningWidget::treeViewDataChanged(const QModelIndex& item, const QVariant& value)
@@ -465,7 +473,7 @@ namespace moveit_cartesian_plan_plugin
 				parent = parent.parent();
 			}
 
-			QModelIndex chldind_pos = model->index(0, 0, parent.sibling(parent.row(), 0));
+			QModelIndex chldind_pos    = model->index(0, 0, parent.sibling(parent.row(), 0));
 			QModelIndex chldind_orient = model->index(1, 0, parent.sibling(parent.row(), 0));
 
 			// read out data
@@ -530,7 +538,7 @@ namespace moveit_cartesian_plan_plugin
 					ui_.progressBar->hide();
 					return;
 				}
-				//clear all the scene before loading all the new points from the file!!
+				// clear all the scene before loading all the new points from the file!!
 				clearAllPoints_slot();
 
 				ROS_INFO_STREAM("Opening the file: "<<fileName.toStdString());
@@ -538,7 +546,7 @@ namespace moveit_cartesian_plan_plugin
 
 				YAML::Node doc;
 				doc = YAML::LoadFile(fin);
-				//define double for percent of completion
+				// define double for percent of completion
 				double percent_complete;
 				int end_of_doc = doc.size();
 
