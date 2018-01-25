@@ -460,7 +460,6 @@ namespace moveit_cartesian_plan_plugin
 			qRegisterMetaType<std::string>("std::string");
 			QAbstractItemModel* model = ui_.treeView->model();
 
-
 			QModelIndex parent = item ;
 			while (parent.parent() != QModelIndex()) {
 				parent = parent.parent();
