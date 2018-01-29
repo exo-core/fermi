@@ -28,20 +28,30 @@ namespace moveit_cartesian_plan_plugin
 		WAY_POINT_COLOR_OUTSIDE_IK_.b = 0.0;
 		WAY_POINT_COLOR_OUTSIDE_IK_.a = 1.0;
 
-		WAY_POINT_SCALE_CONTROL_.x = 0.28;
+		/*WAY_POINT_SCALE_CONTROL_.x = 0.28;
 		WAY_POINT_SCALE_CONTROL_.y = 0.032;
-		WAY_POINT_SCALE_CONTROL_.z = 0.032;
+		WAY_POINT_SCALE_CONTROL_.z = 0.032;*/
+
+		WAY_POINT_SCALE_CONTROL_.x = 0.1;
+		WAY_POINT_SCALE_CONTROL_.y = 0.1;
+		WAY_POINT_SCALE_CONTROL_.z = 0.1;
 
 		INTERACTIVE_MARKER_SCALE_ = 0.4;
 
-		ARROW_INTER_COLOR_.r = 0.8;
+		/*ARROW_INTER_COLOR_.r = 0.8;
 		ARROW_INTER_COLOR_.g = 0.2;
 		ARROW_INTER_COLOR_.b = 0.1;
-		ARROW_INTER_COLOR_.a = 1.0;
+		ARROW_INTER_COLOR_.a = 1.0;*/
 
+		/*
 		ARROW_INTER_SCALE_CONTROL_.x = 0.27;
 		ARROW_INTER_SCALE_CONTROL_.y = 0.03;
 		ARROW_INTER_SCALE_CONTROL_.z = 0.03;
+		 */
+
+		ARROW_INTER_SCALE_CONTROL_.x = 0.1;
+		ARROW_INTER_SCALE_CONTROL_.y = 0.1;
+		ARROW_INTER_SCALE_CONTROL_.z = 0.1;
 
 		ARROW_INTERACTIVE_SCALE_ = 0.3;
 
@@ -303,10 +313,12 @@ namespace moveit_cartesian_plan_plugin
 		 **/
 		Marker marker;
 
-		marker.type = Marker::ARROW;
+		marker.type = marker.type = Marker::MESH_RESOURCE;
+		marker.mesh_resource = "package://moveit_cartesian_plan_plugin/meshes/axes.dae";
 		marker.scale = WAY_POINT_SCALE_CONTROL_;
 
-		marker.color = WAY_POINT_COLOR_;
+		//marker.color = WAY_POINT_COLOR_;
+		marker.mesh_use_embedded_materials = true ;
 		marker.action = visualization_msgs::Marker::ADD;
 		return marker;
 	}
@@ -537,12 +549,13 @@ namespace moveit_cartesian_plan_plugin
 		//define a marker
 		Marker marker;
 
-		marker.type = Marker::ARROW;
+		marker.type = Marker::MESH_RESOURCE;
+		marker.mesh_resource = "package://moveit_cartesian_plan_plugin/meshes/axes.dae";
 		marker.scale = ARROW_INTER_SCALE_CONTROL_;
 
-
 		//make the markers with interesting color
-		marker.color = ARROW_INTER_COLOR_;
+		//marker.color = ARROW_INTER_COLOR_;
+		marker.mesh_use_embedded_materials = true;
 
 		return marker;
 	}
@@ -745,7 +758,13 @@ namespace moveit_cartesian_plan_plugin
 			interact_marker.controls.at(control_size).markers.at(0).color = WAY_POINT_COLOR_OUTSIDE_IK_;
 		}
 		else {
-			interact_marker.controls.at(control_size).markers.at(0).color = WAY_POINT_COLOR_;
+			interact_marker.controls.at(control_size).markers.at(0).color.r = 0 ;
+			interact_marker.controls.at(control_size).markers.at(0).color.g = 0 ;
+			interact_marker.controls.at(control_size).markers.at(0).color.b = 0 ;
+			interact_marker.controls.at(control_size).markers.at(0).color.a = 0 ;
+
+			interact_marker.controls.at(control_size).markers.at(0).mesh_use_embedded_materials = true ;
+			//interact_marker.controls.at(control_size).markers.at(0).color = WAY_POINT_COLOR_;
 		}
 
 		server_->insert( interact_marker);
