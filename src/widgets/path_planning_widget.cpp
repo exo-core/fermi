@@ -753,7 +753,6 @@ namespace moveit_cartesian_plan_plugin
 			cart_vals->max_cart_vel.set.angular.y = ui_.txt_MaxVel_RY->text().toDouble();
 			cart_vals->max_cart_vel.set.angular.z = ui_.txt_MaxVel_RZ->text().toDouble();
 
-
 			//Maximum Control Force Linear
 			cart_vals->max_ctrl_force.set.force.x = ui_.txt_MaxCtrlForce_X->text().toDouble();
 			cart_vals->max_ctrl_force.set.force.y = ui_.txt_MaxCtrlForce_Y->text().toDouble();
@@ -890,7 +889,7 @@ namespace moveit_cartesian_plan_plugin
 		}
 
 		void PathPlanningWidget::emitNewWaypointInputValueChangedSignal() {
-			ROS_INFO("Sending newWaypointInput_valueChanged signal");
+			//ROS_INFO("Sending newWaypointInput_valueChanged signal");
 			Q_EMIT newWaypointInputValueChanged(getNewWaypointInputValue());
 		}
 

@@ -93,6 +93,8 @@ namespace moveit_cartesian_plan_plugin {
 			void swapWaypoints(const int index1, const int index2);
 			//! Slot for handling when the user updates the position of the Interactive Markers.
 			void waypointUpdated(const Waypoint &point_pos, const int index);
+
+			void waypointPreviewPoseUpdated(const tf::Transform& pose);
 			//! Slot for parsing the Way-Points before sending them to the MoveIt class.
 			void parseWayPoints();
 			//! Save all the Way-Points to a yaml file.

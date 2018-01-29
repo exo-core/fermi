@@ -1,6 +1,6 @@
-
 #include <moveit_cartesian_plan_plugin/add_way_point.h>
 
+#define POSE_PREVIEW_MARKER_NAME "pose_preview"
 
 namespace moveit_cartesian_plan_plugin
 {
@@ -100,6 +100,7 @@ namespace moveit_cartesian_plan_plugin
 		connect(widget_, SIGNAL(swapWaypoints_signal(const int, const int)), this, SLOT(swapWaypoints(const int, const int)));
 		connect(widget_, SIGNAL(clearAllPoints_signal()), this, SLOT(clearAllPointsRViz()));
 		connect(widget_, SIGNAL(sendSendSelectedPlanGroup(int)), path_generate_, SLOT(getSelectedGroupIndex(int)));
+		connect(widget_, SIGNAL(newWaypointInputValueChanged(const tf::Transform&)), this, SLOT(waypointPreviewPoseUpdated(const tf::Transform&)));
 
 		connect(path_generate_, SIGNAL(getRobotModelFrame_signal(const std::string, const tf::Transform)),this,SLOT(getRobotModelFrame_slot(const std::string, const tf::Transform)));
 		connect(path_generate_, SIGNAL(getRobotModelFrame_signal(const std::string, const tf::Transform)),widget_,SLOT(setAddPointUIStartPos(const std::string, const tf::Transform)));
@@ -200,7 +201,7 @@ namespace moveit_cartesian_plan_plugin
 				break;
 			}
 			case visualization_msgs::InteractiveMarkerFeedback::POSE_UPDATE: {
-				if (feedback->marker_name == "pose_preview") {
+				if (feedback->marker_name == POSE_PREVIEW_MARKER_NAME) {
 					tf::Transform pose ;
 					tf::poseMsgToTF(feedback->pose, pose);
 
@@ -433,6 +434,20 @@ namespace moveit_cartesian_plan_plugin
 		Q_EMIT onUpdatePosCheckIkValidity(interact_marker.pose, count_arrow);
 	}
 
+	void AddWayPoint::waypointPreviewPoseUpdated(const tf::Transform& pose) {
+		//ROS_INFO_STREAM("updating marker") ;
+
+		geometry_msgs::Pose pose_msg;
+		tf::poseTFToMsg(pose, pose_msg);
+
+		InteractiveMarker interact_marker ;
+
+		server_->get(POSE_PREVIEW_MARKER_NAME, interact_marker);
+		interact_marker.pose = pose_msg ;
+		server_->insert( interact_marker);
+		server_->applyChanges();
+	}
+
 	void AddWayPoint::changeMarkerControlAndPose(std::string marker_name,bool set_control) {
 		/**
 		 * Handling the events from the clicked Menu Items for the Control of the Way-Point.
@@ -617,7 +632,7 @@ namespace moveit_cartesian_plan_plugin
 		inter_arrow_marker_.description = "New waypoint pose";
 
 		//button like interactive marker. Detect when we have left click with the mouse and add new arrow then
-		inter_arrow_marker_.name = "pose_preview";
+		inter_arrow_marker_.name = POSE_PREVIEW_MARKER_NAME;
 
 		makeInteractiveMarkerControl(inter_arrow_marker_);
 		server_->insert( inter_arrow_marker_);
