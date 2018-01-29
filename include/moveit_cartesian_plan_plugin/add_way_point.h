@@ -59,14 +59,15 @@ class BoolProperty;
 
 using namespace visualization_msgs;
 namespace moveit_cartesian_plan_plugin {
-	/*!
-	 *  \brief     Class for handling the User Interactions with the RViz enviroment.
-	 *  \details   The AddWayPoint Class handles all the Visualization in the RViz enviroment.
-				   This Class inherits from the rviz::Panel superclass.
-	 *  \author    Risto Kojcev
-	 */
+	/**
+	 * @brief     Class for handling the User Interactions with the RViz enviroment.
+	 * @details   The AddWayPoint Class handles all the Visualization in the RViz enviroment.
+	 *            This Class inherits from the rviz::Panel superclass.
+	 * @author    Arne Peters, Risto Kojcev
+	 **/
 	class AddWayPoint: public rviz::Panel {
 		Q_OBJECT
+
 		public:
 			//! A Constructor for the RViz Panel.
 			AddWayPoint(QWidget* parent = 0);
