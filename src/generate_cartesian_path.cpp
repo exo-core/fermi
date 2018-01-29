@@ -87,7 +87,7 @@ void GenerateCartesianPath::init()
 
 	ROS_INFO_STREAM("Group name:"<< group_names_[selected_plan_group_]);
 
-	moveit_group_ = MoveGroupPtr(new moveit::planning_interface::MoveGroup(group_names_[selected_plan_group_]));
+	moveit_group_ = MoveGroupPtr(new moveit::planning_interface::MoveGroupInterface(group_names_[selected_plan_group_]));
 	kinematic_state_ = moveit::core::RobotStatePtr(new robot_state::RobotState(kmodel_));
 	kinematic_state_->setToDefaultValues();
 
@@ -121,7 +121,7 @@ void GenerateCartesianPath::moveToPoses(std::vector<geometry_msgs::Pose> waypoin
 	moveit_group_->setPlanningTime(PLAN_TIME_);
 	moveit_group_->allowReplanning (MOVEIT_REPLAN_);
 
-	moveit::planning_interface::MoveGroup::Plan plan;
+	moveit::planning_interface::MoveGroupInterface::Plan plan;
 
 	moveit_msgs::RobotTrajectory trajectory_;
 	double fraction = moveit_group_->computeCartesianPath(waypoints,CART_STEP_SIZE_,CART_JUMP_THRESH_,trajectory_,AVOID_COLLISIONS_);
@@ -249,7 +249,7 @@ void GenerateCartesianPath::getSelectedGroupIndex(int index)
 	ROS_INFO_STREAM("selected name is:"<<group_names_[selected_plan_group_]);
 	moveit_group_.reset();
 	kinematic_state_.reset();
-	moveit_group_ = MoveGroupPtr(new moveit::planning_interface::MoveGroup(group_names_[selected_plan_group_]));
+	moveit_group_ = MoveGroupPtr(new moveit::planning_interface::MoveGroupInterface(group_names_[selected_plan_group_]));
 
 	kinematic_state_ = moveit::core::RobotStatePtr(new robot_state::RobotState(kmodel_));
 	kinematic_state_->setToDefaultValues();
