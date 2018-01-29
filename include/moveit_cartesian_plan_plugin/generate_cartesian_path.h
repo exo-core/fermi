@@ -22,9 +22,8 @@
 #define GENERATE_CARTESIAN_PATH_H_
 
 // Lets it build in Kinetic
-namespace move_group_interface = moveit::planning_interface;
 
-typedef boost::shared_ptr<move_group_interface::MoveGroup> MoveGroupPtr;
+typedef boost::shared_ptr<moveit::planning_interface::MoveGroup> MoveGroupPtr;
 typedef boost::shared_ptr<robot_model_loader::RobotModelLoader> RobotModelLoaderPtr;
 
 /**
@@ -49,7 +48,7 @@ public:
 	virtual ~GenerateCartesianPath();
 	//! Initialization of the necessary MoveIt parameters.
 	void init();
-	//get the current planning group name
+	//! get the current planning group name
 	void getPlanGroupName(const std_msgs::StringConstPtr& msg);
 
 public Q_SLOTS:
