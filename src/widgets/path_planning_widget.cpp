@@ -54,9 +54,6 @@ namespace moveit_cartesian_plan_plugin
 			headers<<tr("Point")<<tr("Position (m)")<<tr("Orientation (deg)");
 			PointTreeModel *model = new PointTreeModel(headers,"");
 			ui_.treeView->setModel(model);
-			ui_.btn_LoadPath->setToolTip(tr("Load Way-Points from a file"));
-			ui_.btn_SavePath->setToolTip(tr("Save Way-Points to a file"));
-			ui_.btnAddPoint->setToolTip(tr("Add a new Way-Point"));
 
 			ui_.combo_DOF_FT->addItem("X");
 			ui_.combo_DOF_FT->addItem("Y");
@@ -69,16 +66,8 @@ namespace moveit_cartesian_plan_plugin
 			//connect(ui_.treeView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection & selected, const QItemSelection & deselected)),this,SLOT(selectedPoint(const QItemSelection & selected, const QItemSelection & deselected)));
 			connect(ui_.treeView->selectionModel(), SIGNAL(currentChanged(const QModelIndex&, const QModelIndex& )), this, SLOT(selectedPoint(const QModelIndex& , const QModelIndex&)));
 			connect(ui_.treeView->model(), SIGNAL(itemValueChanged(const QModelIndex&, const QVariant&)), this, SLOT(treeViewDataChanged(const QModelIndex&, const QVariant&)));
-			connect(ui_.targetPoint, SIGNAL(clicked()), this, SLOT(sendCartTrajectoryParamsFromUI()));
-			connect(ui_.targetPoint, SIGNAL(clicked()), this, SLOT(parseWayPointBtn_slot()));
-			connect(ui_.btn_LoadPath, SIGNAL(clicked()), this, SLOT(loadPointsFromFile()));
-			connect(ui_.btn_SavePath, SIGNAL(clicked()), this, SLOT(savePointsToFile()));
-			connect(ui_.btn_ClearAllPoints, SIGNAL(clicked()), this, SLOT(clearAllPoints_slot()));
 
-			connect(ui_.btn_moveToHome, SIGNAL(clicked()),this, SLOT(moveToHomeFromUI()));
 			connect(ui_.combo_planGroup, SIGNAL(currentIndexChanged(int)), this,SLOT(selectedPlanGroup(int)));
-			connect(ui_.btn_SendCartParams, SIGNAL(clicked()), this, SLOT(setCartesianImpedanceParamsUI()));
-			connect(ui_.btn_setFT, SIGNAL(clicked()), this, SLOT(setCartesianFTParamsUI()));
 
 			connect(ui_.newWaypointX,  SIGNAL(valueChanged(double)), this, SLOT(newWaypointValueChanged(double)));
 			connect(ui_.newWaypointY,  SIGNAL(valueChanged(double)), this, SLOT(newWaypointValueChanged(double)));
@@ -104,15 +93,14 @@ namespace moveit_cartesian_plan_plugin
 				ui_.combo_DOF_FT->setEnabled(true);
 				ui_.txt_FTValue->setEnabled(true);
 				ui_.txt_FTStiffness->setEnabled(true);
-				ui_.btn_setFT->setEnabled(true);
+				ui_.setFTButton->setEnabled(true);
 			}
 			else {
 				ui_.combo_DOF_FT->setEnabled(false);
 				ui_.txt_FTValue->setEnabled(false);
 				ui_.txt_FTStiffness->setEnabled(false);
-				ui_.btn_setFT->setEnabled(false);
+				ui_.setFTButton->setEnabled(false);
 			}
-
 		}
 
 		void PathPlanningWidget::withCartImpedanceStateChanged(int state) {
@@ -137,14 +125,14 @@ namespace moveit_cartesian_plan_plugin
 				ui_.combo_DOF_FT->setEnabled(true);
 				ui_.txt_FTValue->setEnabled(true);
 				ui_.txt_FTStiffness->setEnabled(true);
-				ui_.btn_setFT->setEnabled(true);
+				ui_.setFTButton->setEnabled(true);
 			}
 			else {
 				ROS_INFO("User has disabled Force/Torque Control");
 				ui_.combo_DOF_FT->setEnabled(false);
 				ui_.txt_FTValue->setEnabled(false);
 				ui_.txt_FTStiffness->setEnabled(false);
-				ui_.btn_setFT->setEnabled(false);
+				ui_.setFTButton->setEnabled(false);
 			}
 
 		}
@@ -224,14 +212,14 @@ namespace moveit_cartesian_plan_plugin
 			ROS_INFO_STREAM("Selected Waypoint: "<<selected_waypoint_<<" ("<<getWaypointName(selected_waypoint_)<<")");
 		}
 
-		void PathPlanningWidget::on_btnAddPoint_clicked() {
+		void PathPlanningWidget::on_addNewWaypointButton_clicked() {
 			/**
 			 * Function for adding new Way-Point from the RQT Widget.
 			 * The user can set the position and orientation of the Way-Point by entering their values in the LineEdit fields.
 			 * This function is connected to the AddPoint button click() signal and sends the addPoint(point_pos) to inform the RViz enviroment that a new Way-Point has been added.
 			 **/
 
-			ROS_DEBUG("PathPlanningWidget::on_btnAddPoint_clicked");
+			ROS_DEBUG("PathPlanningWidget::on_addNewWaypointButton_clicked");
 
 			// create transform
 			Waypoint point_pos("New Point "+std::to_string(name_counter_++), getNewWaypointInputValue());
@@ -531,18 +519,19 @@ namespace moveit_cartesian_plan_plugin
 			Q_EMIT pointPosUpdated_signal(waypoint, parent.row());
 		}
 
-		void PathPlanningWidget::parseWayPointBtn_slot() {
+		void PathPlanningWidget::on_executePathButton_clicked() {
 			/**
 			 * Letting know the Cartesian Path Planner Class that the user has pressed the Execute Cartesian Path
 			 * button.
 			 **/
 
-			ROS_DEBUG("PathPlanningWidget::parseWayPointBtn_slot");
+			ROS_DEBUG("PathPlanningWidget::on_executePathButton_clicked");
 
+			sendCartTrajectoryParamsFromUI();
 			Q_EMIT parseWayPointBtn_signal();
 		}
 
-		void PathPlanningWidget::loadPointsFromFile() {
+		void PathPlanningWidget::on_loadPathButton_clicked() {
 			/**
 			 * Slot that takes care of opening a previously saved Way-Points yaml file.
 			 * Opens Qt Dialog for selecting the file, opens the file and parses the data.
@@ -550,7 +539,7 @@ namespace moveit_cartesian_plan_plugin
 			 * is send to the RQT and the RViz so they can update their enviroments.
 			 **/
 
-			ROS_DEBUG("PathPlanningWidget::loadPointsFromFile");
+			ROS_DEBUG("PathPlanningWidget::on_loadPathButton_clicked");
 
 			QString fileName = QFileDialog::getOpenFileName(this,
 															tr("Open Way Points File"), "",
@@ -575,7 +564,7 @@ namespace moveit_cartesian_plan_plugin
 					return;
 				}
 				// clear all the scene before loading all the new points from the file!!
-				clearAllPoints_slot();
+				on_clearAllPointsButton_clicked();
 
 				ROS_INFO_STREAM("Opening the file: "<<fileName.toStdString());
 				std::string fin(fileName.toStdString());
@@ -615,22 +604,22 @@ namespace moveit_cartesian_plan_plugin
 			}
 		}
 
-		void PathPlanningWidget::savePointsToFile() {
+		void PathPlanningWidget::on_savePathButton_clicked() {
 			/**
 			 * Just inform the RViz environment that Save Way-Points button has been pressed.
 			 **/
 
-			ROS_DEBUG("PathPlanningWidget::savePointsToFile");
+			ROS_DEBUG("PathPlanningWidget::on_savePathButton_clicked");
 
 			Q_EMIT saveToFileBtn_press();
 		}
 
-		void PathPlanningWidget::clearAllPoints_slot() {
+		void PathPlanningWidget::on_clearAllPointsButton_clicked() {
 			/**
 			 * Clear all the Way-Points from the RViz environment and the TreeView.
 			 **/
 
-			ROS_DEBUG("PathPlanningWidget::clearAllPoints_slot");
+			ROS_DEBUG("PathPlanningWidget::on_clearAllPointsButton_clicked");
 
 			QAbstractItemModel *model = ui_.treeView->model();
 			model->removeRows(0,model->rowCount());
@@ -687,7 +676,7 @@ namespace moveit_cartesian_plan_plugin
 			ROS_DEBUG("PathPlanningWidget::cartesianPathStartedHandler");
 
 			ui_.tabWidget->setEnabled(false);
-			ui_.targetPoint->setEnabled(false);
+			ui_.executePathButton->setEnabled(false);
 		}
 
 		void PathPlanningWidget::cartesianPathFinishedHandler() {
@@ -698,7 +687,7 @@ namespace moveit_cartesian_plan_plugin
 			ROS_DEBUG("PathPlanningWidget::cartesianPathFinishedHandler");
 
 			ui_.tabWidget->setEnabled(true);
-			ui_.targetPoint->setEnabled(true);
+			ui_.executePathButton->setEnabled(true);
 
 		}
 
@@ -716,15 +705,15 @@ namespace moveit_cartesian_plan_plugin
 			ui_.lbl_cartPathCompleted->setText("Cartesian path " + QString::number(fraction) + "% completed.");
 		}
 
-		void PathPlanningWidget::moveToHomeFromUI() {
-			ROS_DEBUG("PathPlanningWidget::moveToHomeFromUI");
+		void PathPlanningWidget::on_moveToHomePoseButton_clicked() {
+			ROS_DEBUG("PathPlanningWidget::on_moveToHomePoseButton_clicked");
 
 			sendCartTrajectoryParamsFromUI();
 			Q_EMIT moveToHomeFromUI_signal();
 		}
 
-		void PathPlanningWidget::setCartesianImpedanceParamsUI() {
-			ROS_DEBUG("PathPlanningWidget::setCartesianImpedanceParamsUI");
+		void PathPlanningWidget::on_setCartImpParamsButton_clicked() {
+			ROS_DEBUG("PathPlanningWidget::on_setCartImpParamsButton_clicked");
 
 			cartesian_impedance_msgs::SetCartesianImpedancePtr cart_vals(new cartesian_impedance_msgs::SetCartesianImpedance);
 
@@ -783,8 +772,8 @@ namespace moveit_cartesian_plan_plugin
 			cart_vals->null_space_params.stiffness.clear();
 		}
 
-		void PathPlanningWidget::setCartesianFTParamsUI() {
-			ROS_DEBUG("PathPlanningWidget::setCartesianFTParamsUI");
+		void PathPlanningWidget::on_setFTButton_clicked() {
+			ROS_DEBUG("PathPlanningWidget::on_setFTButton_clicked");
 
 			cartesian_impedance_msgs::SetCartesianForceCtrlPtr ft_vals(new cartesian_impedance_msgs::SetCartesianForceCtrl);
 			QByteArray dof = ui_.combo_DOF_FT->currentText().toLatin1();

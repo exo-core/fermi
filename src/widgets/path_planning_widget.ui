@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>428</width>
-    <height>968</height>
+    <width>406</width>
+    <height>946</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
       <enum>Qt::CustomContextMenu</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab_MakePlan">
       <attribute name="title">
@@ -222,6 +222,9 @@
          </item>
          <item row="2" column="0">
           <widget class="QPushButton" name="btnAddPoint">
+           <property name="toolTip">
+            <string>Add a new Way-Point</string>
+           </property>
            <property name="text">
             <string>Add Point</string>
            </property>
@@ -676,21 +679,27 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="btn_ClearAllPoints">
+        <widget class="QPushButton" name="clearAllPointsButton">
          <property name="text">
           <string>Clear All Points</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="btn_SavePath">
+        <widget class="QPushButton" name="savePathButton">
+         <property name="toolTip">
+          <string>Save Way-Points to a file</string>
+         </property>
          <property name="text">
           <string>Save Path</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="btn_LoadPath">
+        <widget class="QPushButton" name="loadPathButton">
+         <property name="toolTip">
+          <string>Load Way-Points from a file</string>
+         </property>
          <property name="text">
           <string>Load Path</string>
          </property>
@@ -1225,7 +1234,7 @@
         </layout>
        </item>
        <item>
-        <widget class="QPushButton" name="btn_SendCartParams">
+        <widget class="QPushButton" name="setCartImpParamsButton">
          <property name="text">
           <string>Set</string>
          </property>
@@ -1398,7 +1407,7 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_10">
           <item>
-           <widget class="QLabel" name="label_25">
+           <widget class="QLabel" name="serCartesianForceControlLabel">
             <property name="font">
              <font>
               <pointsize>11</pointsize>
@@ -1522,7 +1531,7 @@
            </layout>
           </item>
           <item>
-           <widget class="QPushButton" name="btn_setFT">
+           <widget class="QPushButton" name="setFTButton">
             <property name="text">
              <string>Set F/T Control</string>
             </property>
@@ -1532,14 +1541,14 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="btn_moveToHome">
+        <widget class="QPushButton" name="moveToHomePoseButton">
          <property name="text">
           <string>Move to Home</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="targetPoint">
+        <widget class="QPushButton" name="executePathButton">
          <property name="text">
           <string>Execute Cartesian Path</string>
          </property>
@@ -1587,9 +1596,9 @@
  </widget>
  <tabstops>
   <tabstop>combo_planGroup</tabstop>
-  <tabstop>btn_ClearAllPoints</tabstop>
-  <tabstop>btn_SavePath</tabstop>
-  <tabstop>btn_LoadPath</tabstop>
+  <tabstop>clearAllPointsButton</tabstop>
+  <tabstop>savePathButton</tabstop>
+  <tabstop>loadPathButton</tabstop>
   <tabstop>chk_CartImpedance</tabstop>
   <tabstop>txt_Stiffness_X</tabstop>
   <tabstop>txt_Stiffness_Y</tabstop>
@@ -1623,7 +1632,7 @@
   <tabstop>txt_MaxPathDev_RZ</tabstop>
   <tabstop>txt_NullSpace_Stiffness</tabstop>
   <tabstop>txt_NullSpace_Damping</tabstop>
-  <tabstop>btn_SendCartParams</tabstop>
+  <tabstop>setCartImpParamsButton</tabstop>
   <tabstop>lnEdit_PlanTime</tabstop>
   <tabstop>chk_AllowReplanning</tabstop>
   <tabstop>lnEdit_StepSize</tabstop>
@@ -1633,9 +1642,9 @@
   <tabstop>combo_DOF_FT</tabstop>
   <tabstop>txt_FTValue</tabstop>
   <tabstop>txt_FTStiffness</tabstop>
-  <tabstop>btn_setFT</tabstop>
-  <tabstop>btn_moveToHome</tabstop>
-  <tabstop>targetPoint</tabstop>
+  <tabstop>setFTButton</tabstop>
+  <tabstop>moveToHomePoseButton</tabstop>
+  <tabstop>executePathButton</tabstop>
  </tabstops>
  <resources/>
  <connections/>

@@ -16,9 +16,8 @@
 
 #include <moveit_cartesian_plan_plugin/add_way_point.h>
 #include <moveit_cartesian_plan_plugin/waypoint.h>
-/*!
- *  \brief The set of messages necessary to publish Cartesian Impedance/Force Control parameters via ROS Topic
-*/
+
+/// @brief The set of messages necessary to publish Cartesian Impedance/Force Control parameters via ROS Topic
 #include <cartesian_impedance_msgs/SetCartesianImpedance.h>
 #include <cartesian_impedance_msgs/SetCartesianForceCtrl.h>
 
@@ -51,17 +50,17 @@
 namespace moveit_cartesian_plan_plugin {
 	namespace widgets {
 
-		/*!
+		/**
 		 *  @brief     Class for handling the User Interactions with the RQT Widget.
 		 *  @details   The PathPlanningWidget Class handles all User Interactions with the RQT GUI.
 		 *             This Class inherits from the QWidget superclass.
-		 *             The concept of the RQT widget is to add the same possabilities as the UI from the RViz enviroment
-		 *             and enabling simultanious communication betweet the RViz Enviroment and the RQT GUI.
+		 *             The concept of the RQT widget is to add the same possibilities as the UI from the RViz
+		 *             environment and enabling simultaneous communication between the RViz Environment and the RQT GUI.
 		 *             The updated plugin also allows Impedance/Force Control parameters to be set via the Qt UI of
 		 *             the plugin.
 		 *             Of course you need to make sure that you have implemented this in the particular robot driver.
 		 *  @author    Arne Peters, Risto Kojcev
-		 */
+		 **/
 
 		class PathPlanningWidget: public QWidget {
 			Q_OBJECT
@@ -94,12 +93,11 @@ namespace moveit_cartesian_plan_plugin {
 				QStandardItemModel* pointDataModel;
 
 			protected Q_SLOTS:
+				/// Set the start pose of the User Interactive Marker to correspond to the loaded robot base frame.
+				void setAddPointUIStartPos(const std::string robot_model_frame,const tf::Transform end_effector);
+
 				/// Initialize the TreeView with the User Interactive Marker.
 				void initTreeView();
-				/// Handle the event of a Way-Point deleted from the RQT UI.
-				void on_deleteWaypointButton_clicked();
-				/// Handle the event of a Way-Point added from the RQT UI.
-				void on_btnAddPoint_clicked();
 				/// Insert a row in the TreeView.
 				void insertRow(const Waypoint& point_pos,const int count);
 				/// Remove a row in the TreeView.
@@ -110,16 +108,35 @@ namespace moveit_cartesian_plan_plugin {
 				void selectedPoint(const QModelIndex& current, const QModelIndex& previous);
 				/// Handle the even when the data in the TreeView has been changed.
 				void treeViewDataChanged(const QModelIndex& item, const QVariant& value);
+
+				/// Handle the event of a Way-Point deleted from the RQT UI.
+				void on_deleteWaypointButton_clicked();
+				/// Handle the event of a Way-Point added from the RQT UI.
+				void on_addNewWaypointButton_clicked();
 				/// Slot for parsing the Way-Points and notifying the MoveIt.
-				void parseWayPointBtn_slot();
+				void on_executePathButton_clicked();
 				/// Send a signal that a save the Way-Points to a file button has been pressed.
-				void savePointsToFile();
+				void on_savePathButton_clicked();
 				/// Send a signal that a load the Way-Points from a file button has been pressed.
-				void loadPointsFromFile();
+				void on_loadPathButton_clicked();
 				/// Slot connected to a clear all points button click.
-				void clearAllPoints_slot();
-				/// Set the start pose of the User Interactive Marker to correspond to the loaded robot base frame.
-				void setAddPointUIStartPos(const std::string robot_model_frame,const tf::Transform end_effector);
+				void on_clearAllPointsButton_clicked();
+
+				void on_copyCurrentPoseButton_clicked();
+				void on_addCurrentPositionPointButton_clicked();
+				void on_moveToNewPositionButton_clicked();
+				void on_moveToWaypointButton_clicked();
+
+				void on_moveWaypointUpButton_clicked();
+				void on_moveWaypointDownButton_clicked();
+
+				/// Create a slot to call a signal on which the Move the robot to home position function is called
+				void on_moveToHomePoseButton_clicked();
+				/// set the read the Cartesian Impedance parameters from the UI and send them to the designated topic.
+				void on_setCartImpParamsButton_clicked();
+				/// set the read the Cartesian Force parameters from the UI and send them to the designated topic.
+				void on_setFTButton_clicked();
+
 				void updateCurrentPositionDisplay(const std::string, const tf::Transform end_effector);
 				/// Slot for disabling the TabWidged while Cartesian Path is executed.
 				void cartesianPathStartedHandler();
@@ -137,25 +154,11 @@ namespace moveit_cartesian_plan_plugin {
 
 				void selectedPlanGroup(int index);
 
-				/// Create a slot to call a signal on which the Move the robot to home position function is called
-				void moveToHomeFromUI();
-				/// set the read the Cartesian Impedance parameters from the UI and send them to the designated topic.
-				void setCartesianImpedanceParamsUI();
-				/// set the read the Cartesian Force parameters from the UI and send them to the designated topic.
-				void setCartesianFTParamsUI();
 				/// Check if the user wants to have cartesian Impedance enabled (check if depreciated)
 				void withCartImpedanceStateChanged(int state);
 
 				/// Check if the user wants to have F/T control from the UI
 				void withFTControl(int state);
-
-				void on_copyCurrentPoseButton_clicked();
-				void on_addCurrentPositionPointButton_clicked();
-				void on_moveToNewPositionButton_clicked();
-				void on_moveToWaypointButton_clicked();
-
-				void on_moveWaypointUpButton_clicked();
-				void on_moveWaypointDownButton_clicked();
 
 				void newWaypointValueChanged(double);
 
@@ -184,6 +187,7 @@ namespace moveit_cartesian_plan_plugin {
 				/// On this signal we will call the function for which will execute the MoveIt command to bring the robot in its initial state.
 				void moveToHomeFromUI_signal();
 
+				/// Signal to trigger a motion to a single pose
 				void moveToPose_signal(geometry_msgs::Pose);
 
 				void sendSendSelectedPlanGroup(int index);
