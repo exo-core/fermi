@@ -40,11 +40,6 @@ namespace moveit_cartesian_plan_plugin
 
 			selected_waypoint_ = -1 ;
 
-			//set validators for the entries
-			ui_.lnEdit_PlanTime->setValidator(new QDoubleValidator(1.0,100.0,2,ui_.lnEdit_PlanTime));
-			ui_.lnEdit_StepSize->setValidator(new QDoubleValidator(0.001,0.1,3,ui_.lnEdit_StepSize));
-			ui_.lnEdit_JmpThresh->setValidator(new QDoubleValidator(0.0,1000.0,3,ui_.lnEdit_JmpThresh));
-
 			//set progress bar when loading way-points from a yaml file. Could be nice when loading large way-points files
 			ui_.progressBar->setRange(0,100);
 			ui_.progressBar->setValue(0);
@@ -91,14 +86,14 @@ namespace moveit_cartesian_plan_plugin
 
 			if(ui_.chk_EnableFT->isChecked()) {
 				ui_.combo_DOF_FT->setEnabled(true);
-				ui_.txt_FTValue->setEnabled(true);
-				ui_.txt_FTStiffness->setEnabled(true);
+				ui_.spin_FTValue->setEnabled(true);
+				ui_.spin_FTStiffness->setEnabled(true);
 				ui_.setFTButton->setEnabled(true);
 			}
 			else {
 				ui_.combo_DOF_FT->setEnabled(false);
-				ui_.txt_FTValue->setEnabled(false);
-				ui_.txt_FTStiffness->setEnabled(false);
+				ui_.spin_FTValue->setEnabled(false);
+				ui_.spin_FTStiffness->setEnabled(false);
 				ui_.setFTButton->setEnabled(false);
 			}
 		}
@@ -123,15 +118,15 @@ namespace moveit_cartesian_plan_plugin
 			if(state) {
 				ROS_INFO("User has enabled Force/Torque Control");
 				ui_.combo_DOF_FT->setEnabled(true);
-				ui_.txt_FTValue->setEnabled(true);
-				ui_.txt_FTStiffness->setEnabled(true);
+				ui_.spin_FTValue->setEnabled(true);
+				ui_.spin_FTStiffness->setEnabled(true);
 				ui_.setFTButton->setEnabled(true);
 			}
 			else {
 				ROS_INFO("User has disabled Force/Torque Control");
 				ui_.combo_DOF_FT->setEnabled(false);
-				ui_.txt_FTValue->setEnabled(false);
-				ui_.txt_FTStiffness->setEnabled(false);
+				ui_.spin_FTValue->setEnabled(false);
+				ui_.spin_FTStiffness->setEnabled(false);
 				ui_.setFTButton->setEnabled(false);
 			}
 
@@ -163,9 +158,9 @@ namespace moveit_cartesian_plan_plugin
 			double plan_time_,cart_step_size_,cart_jump_thresh_;
 			bool moveit_replan_,avoid_collisions_;
 
-			plan_time_        = ui_.lnEdit_PlanTime->text().toDouble();
-			cart_step_size_   = ui_.lnEdit_StepSize->text().toDouble();
-			cart_jump_thresh_ = ui_.lnEdit_JmpThresh->text().toDouble();
+			plan_time_        = ui_.spin_PlanTime->value();
+			cart_step_size_   = ui_.spin_StepSize->value();
+			cart_jump_thresh_ = ui_.spin_JmpThresh->value();
 
 			moveit_replan_    = ui_.chk_AllowReplanning->isChecked();
 			avoid_collisions_ = ui_.chk_AvoidColl->isChecked();
@@ -718,53 +713,53 @@ namespace moveit_cartesian_plan_plugin
 			cartesian_impedance_msgs::SetCartesianImpedancePtr cart_vals(new cartesian_impedance_msgs::SetCartesianImpedance);
 
 			//stiffness Ttranslational
-			cart_vals->stiffness.translational.x = ui_.txt_Stiffness_X->text().toDouble();
-			cart_vals->stiffness.translational.y = ui_.txt_Stiffness_Y->text().toDouble();
-			cart_vals->stiffness.translational.z = ui_.txt_Stiffness_Z->text().toDouble();
+			cart_vals->stiffness.translational.x = ui_.spin_Stiffness_X->value();
+			cart_vals->stiffness.translational.y = ui_.spin_Stiffness_Y->value();
+			cart_vals->stiffness.translational.z = ui_.spin_Stiffness_Z->value();
 			//stiffness Rotational
-			cart_vals->stiffness.rotational.x = ui_.txt_Stiffness_RX->text().toDouble();
-			cart_vals->stiffness.rotational.y = ui_.txt_Stiffness_RY->text().toDouble();
-			cart_vals->stiffness.rotational.z = ui_.txt_Stiffness_RZ->text().toDouble();
+			cart_vals->stiffness.rotational.x = ui_.spin_Stiffness_RX->value();
+			cart_vals->stiffness.rotational.y = ui_.spin_Stiffness_RY->value();
+			cart_vals->stiffness.rotational.z = ui_.spin_Stiffness_RZ->value();
 
 			//damping Ttranslational
-			cart_vals->damping.translational.x = ui_.txt_Damping_X->text().toDouble();
-			cart_vals->damping.translational.y = ui_.txt_Damping_Y->text().toDouble();
-			cart_vals->damping.translational.z = ui_.txt_Damping_Z->text().toDouble();
+			cart_vals->damping.translational.x = ui_.spin_Damping_X->value()/100.;
+			cart_vals->damping.translational.y = ui_.spin_Damping_Y->value()/100.;
+			cart_vals->damping.translational.z = ui_.spin_Damping_Z->value()/100.;
 			//damping Rotational
-			cart_vals->damping.rotational.x = ui_.txt_Damping_RX->text().toDouble();
-			cart_vals->damping.rotational.y = ui_.txt_Damping_RY->text().toDouble();
-			cart_vals->damping.rotational.z = ui_.txt_Damping_RZ->text().toDouble();
+			cart_vals->damping.rotational.x = ui_.spin_Damping_RX->value()/100.;
+			cart_vals->damping.rotational.y = ui_.spin_Damping_RY->value()/100.;
+			cart_vals->damping.rotational.z = ui_.spin_Damping_RZ->value()/100.;
 
 			//Maximum Cartesian Velocity Linear
-			cart_vals->max_cart_vel.set.linear.x = ui_.txt_MaxVel_X->text().toDouble();
-			cart_vals->max_cart_vel.set.linear.y = ui_.txt_MaxVel_Y->text().toDouble();
-			cart_vals->max_cart_vel.set.linear.z = ui_.txt_MaxVel_Z->text().toDouble();
+			cart_vals->max_cart_vel.set.linear.x = ui_.spin_MaxVel_X->value();
+			cart_vals->max_cart_vel.set.linear.y = ui_.spin_MaxVel_Y->value();
+			cart_vals->max_cart_vel.set.linear.z = ui_.spin_MaxVel_Z->value();
 			//Maximum Cartesian Velocity Angular
-			cart_vals->max_cart_vel.set.angular.x = ui_.txt_MaxVel_RX->text().toDouble();
-			cart_vals->max_cart_vel.set.angular.y = ui_.txt_MaxVel_RY->text().toDouble();
-			cart_vals->max_cart_vel.set.angular.z = ui_.txt_MaxVel_RZ->text().toDouble();
+			cart_vals->max_cart_vel.set.angular.x = ui_.spin_MaxVel_RX->value();
+			cart_vals->max_cart_vel.set.angular.y = ui_.spin_MaxVel_RY->value();
+			cart_vals->max_cart_vel.set.angular.z = ui_.spin_MaxVel_RZ->value();
 
 			//Maximum Control Force Linear
-			cart_vals->max_ctrl_force.set.force.x = ui_.txt_MaxCtrlForce_X->text().toDouble();
-			cart_vals->max_ctrl_force.set.force.y = ui_.txt_MaxCtrlForce_Y->text().toDouble();
-			cart_vals->max_ctrl_force.set.force.z = ui_.txt_MaxCtrlForce_Z->text().toDouble();
+			cart_vals->max_ctrl_force.set.force.x = ui_.spin_MaxCtrlForce_X->value();
+			cart_vals->max_ctrl_force.set.force.y = ui_.spin_MaxCtrlForce_Y->value();
+			cart_vals->max_ctrl_force.set.force.z = ui_.spin_MaxCtrlForce_Z->value();
 			//Maximum Control Force Angular
-			cart_vals->max_ctrl_force.set.torque.x = ui_.txt_MaxCtrlForce_RX->text().toDouble();
-			cart_vals->max_ctrl_force.set.torque.y = ui_.txt_MaxCtrlForce_RY->text().toDouble();
-			cart_vals->max_ctrl_force.set.torque.z = ui_.txt_MaxCtrlForce_RZ->text().toDouble();
+			cart_vals->max_ctrl_force.set.torque.x = ui_.spin_MaxCtrlForce_RX->value();
+			cart_vals->max_ctrl_force.set.torque.y = ui_.spin_MaxCtrlForce_RY->value();
+			cart_vals->max_ctrl_force.set.torque.z = ui_.spin_MaxCtrlForce_RZ->value();
 
 			//Maximum Cartesian Path Deviation Translation
-			cart_vals->max_path_deviation.translation.x = ui_.txt_MaxPathDev_X->text().toDouble();
-			cart_vals->max_path_deviation.translation.y = ui_.txt_MaxPathDev_Y->text().toDouble();
-			cart_vals->max_path_deviation.translation.z = ui_.txt_MaxPathDev_Z->text().toDouble();
+			cart_vals->max_path_deviation.translation.x = ui_.spin_MaxPathDev_X->value();
+			cart_vals->max_path_deviation.translation.y = ui_.spin_MaxPathDev_Y->value();
+			cart_vals->max_path_deviation.translation.z = ui_.spin_MaxPathDev_Z->value();
 			//Maximum Cartesian Path Deviation Rotation
-			cart_vals->max_path_deviation.rotation.x = ui_.txt_MaxPathDev_RX->text().toDouble();
-			cart_vals->max_path_deviation.rotation.y = ui_.txt_MaxPathDev_RY->text().toDouble();
-			cart_vals->max_path_deviation.rotation.z = ui_.txt_MaxPathDev_RZ->text().toDouble();
+			cart_vals->max_path_deviation.rotation.x = ui_.spin_MaxPathDev_RX->value();
+			cart_vals->max_path_deviation.rotation.y = ui_.spin_MaxPathDev_RY->value();
+			cart_vals->max_path_deviation.rotation.z = ui_.spin_MaxPathDev_RZ->value();
 
 			//NullSpace reduntant joint parameters
-			cart_vals->null_space_params.stiffness.push_back(ui_.txt_NullSpace_Stiffness->text().toDouble());
-			cart_vals->null_space_params.damping.push_back(ui_.txt_NullSpace_Damping->text().toDouble());
+			cart_vals->null_space_params.stiffness.push_back(ui_.spin_NullSpace_Stiffness->value());
+			cart_vals->null_space_params.damping.push_back(ui_.spin_NullSpace_Damping->value()/100.);
 
 			Q_EMIT setCartesianImpedanceParamsUI_signal(cart_vals);
 
@@ -779,8 +774,8 @@ namespace moveit_cartesian_plan_plugin
 			QByteArray dof = ui_.combo_DOF_FT->currentText().toLatin1();
 			ft_vals->DOF = dof.data();
 
-			ft_vals->force 		 = ui_.txt_FTValue->text().toDouble();
-			ft_vals->stiffness = ui_.txt_FTStiffness->text().toDouble();
+			ft_vals->force 		 = ui_.spin_FTValue->text().toDouble();
+			ft_vals->stiffness = ui_.spin_FTStiffness->text().toDouble();
 
 			setCartesianFTParamsUI_signal(ft_vals);
 		}
