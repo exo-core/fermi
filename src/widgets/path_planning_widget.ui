@@ -20,7 +20,7 @@
       <enum>Qt::CustomContextMenu</enum>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab_MakePlan">
       <attribute name="title">
@@ -221,7 +221,7 @@
           </widget>
          </item>
          <item row="2" column="0">
-          <widget class="QPushButton" name="btnAddPoint">
+          <widget class="QPushButton" name="addNewWaypointButton">
            <property name="toolTip">
             <string>Add a new Way-Point</string>
            </property>
