@@ -6,24 +6,23 @@ namespace moveit_cartesian_plan_plugin
 {
 	namespace widgets {
 
-		PathPlanningWidget::PathPlanningWidget(std::string ns):
-				param_ns_(ns)
+		PathPlanningWidget::PathPlanningWidget(std::string ns)
+				: param_ns_(ns)
 		{
 			/**
 			 * Constructor which calls the init() function.
 			 */
 
+			ROS_DEBUG_STREAM("PathPlanningWidget::PathPlanningWidget("<<ns<<")");
+
 			init();
 		}
 
-		PathPlanningWidget::~PathPlanningWidget()
-		{
-
+		PathPlanningWidget::~PathPlanningWidget() {
+			ROS_DEBUG("PathPlanningWidget::~PathPlanningWidget");
 		}
 
-		void PathPlanningWidget::init()
-		{
-
+		void PathPlanningWidget::init() {
 			/**
 			 * Initializing the RQT UI. Setting up the default values for the UI components:
              * - Default Values for the MoveIt and Cartesian Path
@@ -34,6 +33,8 @@ namespace moveit_cartesian_plan_plugin
              *   .
              *   .
       		 */
+
+			ROS_DEBUG("PathPlanningWidget::init");
 
 			ui_.setupUi(this);
 
@@ -114,34 +115,31 @@ namespace moveit_cartesian_plan_plugin
 
 		}
 
-		void PathPlanningWidget::withCartImpedanceStateChanged(int state)
-		{
-			if(state)
-			{
+		void PathPlanningWidget::withCartImpedanceStateChanged(int state) {
+			ROS_DEBUG_STREAM("PathPlanningWidget::withCartImpedanceStateChanged("<<state<<")");
 
+			if(state) {
 				ROS_INFO("User has enabled impedance");
 				ui_.group_Impedance->setEnabled(true);
 				//	pWidget->setEnabled(true);
 			}
-			else
-			{
+			else {
 				ROS_INFO("User has disabled impedance");
 				ui_.group_Impedance->setEnabled(false);
 			}
 		}
 
-		void PathPlanningWidget::withFTControl(int state)
-		{
-			if(state)
-			{
+		void PathPlanningWidget::withFTControl(int state) {
+			ROS_DEBUG_STREAM("PathPlanningWidget::withFTControl("<<state<<")");
+
+			if(state) {
 				ROS_INFO("User has enabled Force/Torque Control");
 				ui_.combo_DOF_FT->setEnabled(true);
 				ui_.txt_FTValue->setEnabled(true);
 				ui_.txt_FTStiffness->setEnabled(true);
 				ui_.btn_setFT->setEnabled(true);
 			}
-			else
-			{
+			else {
 				ROS_INFO("User has disabled Force/Torque Control");
 				ui_.combo_DOF_FT->setEnabled(false);
 				ui_.txt_FTValue->setEnabled(false);
@@ -151,27 +149,28 @@ namespace moveit_cartesian_plan_plugin
 
 		}
 
-		void PathPlanningWidget::getCartPlanGroup(std::vector< std::string > group_names)
-		{
-			ROS_INFO("setting the name of the planning group in combo box");
+		void PathPlanningWidget::getCartPlanGroup(std::vector< std::string > group_names) {
+			ROS_DEBUG("PathPlanningWidget::getCartPlanGroup");
+
 			int lenght_group = group_names.size();
 
-			for(int i=0;i<lenght_group;i++)
-			{
+			for(int i=0;i<lenght_group;i++) {
 				ui_.combo_planGroup->addItem(QString::fromStdString(group_names[i]));
 			}
 		}
 
-		void PathPlanningWidget::selectedPlanGroup(int index)
-		{
+		void PathPlanningWidget::selectedPlanGroup(int index) {
+			ROS_DEBUG("PathPlanningWidget::selectedPlanGroup");
+
 			Q_EMIT sendSendSelectedPlanGroup(index);
 		}
 
-		void PathPlanningWidget::sendCartTrajectoryParamsFromUI()
-		{
+		void PathPlanningWidget::sendCartTrajectoryParamsFromUI() {
 			/**
 			 * This function takes care of sending the User Entered parameters from the RQT to the Cartesian Path Planner.
 			 */
+
+			ROS_DEBUG("PathPlanningWidget::sendCartTrajectoryParamsFromUI");
 
 			double plan_time_,cart_step_size_,cart_jump_thresh_;
 			bool moveit_replan_,avoid_collisions_;
@@ -187,11 +186,12 @@ namespace moveit_cartesian_plan_plugin
 
 		}
 
-		void PathPlanningWidget::initTreeView()
-		{
+		void PathPlanningWidget::initTreeView() {
 			/**
 			 * Initialize the Qt TreeView and set the initial value of the User Interaction arrow.
 			 */
+
+			ROS_DEBUG("PathPlanningWidget::initTreeView");
 
 			QAbstractItemModel *model = ui_.treeView->model();
 
@@ -199,17 +199,20 @@ namespace moveit_cartesian_plan_plugin
 		}
 
 		std::string PathPlanningWidget::getWaypointName(const int row_index) const {
+			ROS_DEBUG("PathPlanningWidget::getWaypointName");
+
 			QAbstractItemModel *model = ui_.treeView->model();
 			QVariant name = model->data(model->index(row_index, 0), Qt::EditRole);
 			return name.toString().toStdString();
 		}
 
-		void PathPlanningWidget::selectedPoint(const QModelIndex& current, const QModelIndex& previous)
-		{
+		void PathPlanningWidget::selectedPoint(const QModelIndex& current, const QModelIndex& previous) {
 			/**
 			 * Get the selected point from the TreeView.
 			 * This is used for updating the information of the lineEdit which informs gives the number of the currently selected Way-Point.
 			 **/
+
+			ROS_DEBUG("PathPlanningWidget::selectedPoint");
 
 			QModelIndex parent = current ;
 			while (parent.parent() != QModelIndex()) {
@@ -221,15 +224,14 @@ namespace moveit_cartesian_plan_plugin
 			ROS_INFO_STREAM("Selected Waypoint: "<<selected_waypoint_<<" ("<<getWaypointName(selected_waypoint_)<<")");
 		}
 
-		void PathPlanningWidget::on_btnAddPoint_clicked()
-		{
+		void PathPlanningWidget::on_btnAddPoint_clicked() {
 			/**
 			 * Function for adding new Way-Point from the RQT Widget.
 			 * The user can set the position and orientation of the Way-Point by entering their values in the LineEdit fields.
 			 * This function is connected to the AddPoint button click() signal and sends the addPoint(point_pos) to inform the RViz enviroment that a new Way-Point has been added.
 			 **/
 
-			ROS_INFO_STREAM("Add point button clicked");
+			ROS_DEBUG("PathPlanningWidget::on_btnAddPoint_clicked");
 
 			// create transform
 			Waypoint point_pos("New Point "+std::to_string(name_counter_++), getNewWaypointInputValue());
@@ -238,6 +240,8 @@ namespace moveit_cartesian_plan_plugin
 		}
 
 		void PathPlanningWidget::on_addCurrentPositionPointButton_clicked() {
+			ROS_DEBUG("PathPlanningWidget::on_addCurrentPositionPointButton_clicked");
+
 			double x,y,z,rx,ry,rz;
 			x = ui_.currentPositionX->value();
 			y = ui_.currentPositionY->value();
@@ -260,7 +264,7 @@ namespace moveit_cartesian_plan_plugin
 			 * send to Inform the RViz enviroment that a Way-Point has been deleted from the RQT Widget.
 			 **/
 
-			ROS_INFO_STREAM("Deleting row "<<selected_waypoint_<<" of "<<ui_.treeView->model()->rowCount());
+			ROS_DEBUG("PathPlanningWidget::on_deleteWaypointButton_clicked");
 
 			if((0 <= selected_waypoint_) && (selected_waypoint_ < ui_.treeView->model()->rowCount())) {
 				int copy = selected_waypoint_ ;
@@ -281,7 +285,8 @@ namespace moveit_cartesian_plan_plugin
 			 * One child for the orientation giving us the Euler Angles of each axis.
 			 **/
 
-			ROS_INFO_STREAM("inserting new row in the TreeView at pos "<<count);
+			ROS_DEBUG_STREAM("PathPlanningWidget::insertRow("<<point_pos.name_<<","<<count<<")");
+
 			QAbstractItemModel *model = ui_.treeView->model();
 
 			//convert the quartenion to roll pitch yaw angle
@@ -299,23 +304,14 @@ namespace moveit_cartesian_plan_plugin
 				model->insertRow(count, model->index(count, 0));
 			}
 
-			//else
-			//{
+			QString pos_x = QString::number(p.x());
+			QString pos_y = QString::number(p.y());
+			QString pos_z = QString::number(p.z());
 
-				/*if(!model->insertRow(count,model->index(count, 0)))  //&& count==0
-				{
-					return;
-				}*/
-
-				//set the strings of each axis of the position
-				QString pos_x = QString::number(p.x());
-				QString pos_y = QString::number(p.y());
-				QString pos_z = QString::number(p.z());
-
-				//repeat that with the orientation
-				QString orient_x = QString::number(RAD2DEG(rx));
-				QString orient_y = QString::number(RAD2DEG(ry));
-				QString orient_z = QString::number(RAD2DEG(rz));
+			//repeat that with the orientation
+			QString orient_x = QString::number(RAD2DEG(rx));
+			QString orient_y = QString::number(RAD2DEG(ry));
+			QString orient_z = QString::number(RAD2DEG(rz));
 
 
 			// add a child to the last inserted item. First add children in the treeview that
@@ -375,6 +371,8 @@ namespace moveit_cartesian_plan_plugin
 			 *  delete that particular row and update the state of the TreeWidget.
 			 */
 
+			ROS_DEBUG_STREAM("PathPlanningWidget::removeRow("<<index<<")");
+
 			QAbstractItemModel *model = ui_.treeView->model();
 
 			ROS_INFO_STREAM("Deleting point at index: "<< index<<" (name: "<<getWaypointName(index)<<")") ;
@@ -390,6 +388,8 @@ namespace moveit_cartesian_plan_plugin
 		}
 
 		tf::Transform PathPlanningWidget::getNewWaypointInputValue() {
+			ROS_DEBUG("PathPlanningWidget::getNewWaypointInputValue");
+
 			double x, y, z ;
 			x = ui_.newWaypointX->value();
 			y = ui_.newWaypointY->value();
@@ -407,7 +407,7 @@ namespace moveit_cartesian_plan_plugin
 
 		Waypoint PathPlanningWidget::getWaypointFromTreeView(const int index) {
 
-			ROS_INFO_STREAM("Reading tree view item in row "<<index);
+			ROS_DEBUG_STREAM("PathPlanningWidget::getWaypointFromTreeView("<<index<<")");
 
 			//qRegisterMetaType<std::string>("std::string");
 			QAbstractItemModel* model = ui_.treeView->model();
@@ -438,12 +438,13 @@ namespace moveit_cartesian_plan_plugin
 			return Waypoint(getWaypointName(parent.row()), pose) ;
 		}
 
-		void PathPlanningWidget::pointPosUpdated_slot(const Waypoint& waypoint, const int index)
-		{
+		void PathPlanningWidget::pointPosUpdated_slot(const Waypoint& waypoint, const int index) {
 			/**
 			 * When the user updates the position of the Way-Point or the User Interactive Marker, the information in
 			 * the TreeView also needs to be updated to correspond to the current pose of the InteractiveMarkers.
 			 */
+
+			ROS_DEBUG("PathPlanningWidget::pointPosUpdated_slot");
 
 			QAbstractItemModel *model = ui_.treeView->model();
 
@@ -504,14 +505,14 @@ namespace moveit_cartesian_plan_plugin
 			ui_.treeView->update(model->index(2, 1, child_index_orient));
 		}
 
-		void PathPlanningWidget::treeViewDataChanged(const QModelIndex& item, const QVariant& value)
-		{
+		void PathPlanningWidget::treeViewDataChanged(const QModelIndex& item, const QVariant& value) {
 			/*! This function handles the user interactions in the TreeView Widget.
 			 *	The function captures an event of data change and updates the information in the TreeView and the RViz
 			 *  environment.
 			*/
 
-			ROS_INFO_STREAM("Data changed. item: {row: "<<item.row()<<"; column: "<<item.column()<<"}");
+			ROS_DEBUG("PathPlanningWidget::treeViewDataChanged");
+			ROS_DEBUG_STREAM("Data changed. item: {row: "<<item.row()<<"; column: "<<item.column()<<"}");
 
 			if (item == QModelIndex()) {
 				return ;
@@ -530,24 +531,26 @@ namespace moveit_cartesian_plan_plugin
 			Q_EMIT pointPosUpdated_signal(waypoint, parent.row());
 		}
 
-		void PathPlanningWidget::parseWayPointBtn_slot()
-		{
+		void PathPlanningWidget::parseWayPointBtn_slot() {
 			/**
 			 * Letting know the Cartesian Path Planner Class that the user has pressed the Execute Cartesian Path
 			 * button.
 			 **/
 
+			ROS_DEBUG("PathPlanningWidget::parseWayPointBtn_slot");
+
 			Q_EMIT parseWayPointBtn_signal();
 		}
 
-		void PathPlanningWidget::loadPointsFromFile()
-		{
+		void PathPlanningWidget::loadPointsFromFile() {
 			/**
 			 * Slot that takes care of opening a previously saved Way-Points yaml file.
 			 * Opens Qt Dialog for selecting the file, opens the file and parses the data.
 			 * After reading and parsing the data from the file, the information regarding the pose of the Way-Points
 			 * is send to the RQT and the RViz so they can update their enviroments.
 			 **/
+
+			ROS_DEBUG("PathPlanningWidget::loadPointsFromFile");
 
 			QString fileName = QFileDialog::getOpenFileName(this,
 															tr("Open Way Points File"), "",
@@ -612,20 +615,23 @@ namespace moveit_cartesian_plan_plugin
 			}
 		}
 
-		void PathPlanningWidget::savePointsToFile()
-		{
+		void PathPlanningWidget::savePointsToFile() {
 			/**
 			 * Just inform the RViz environment that Save Way-Points button has been pressed.
 			 **/
 
+			ROS_DEBUG("PathPlanningWidget::savePointsToFile");
+
 			Q_EMIT saveToFileBtn_press();
 		}
 
-		void PathPlanningWidget::clearAllPoints_slot()
-		{
+		void PathPlanningWidget::clearAllPoints_slot() {
 			/**
 			 * Clear all the Way-Points from the RViz environment and the TreeView.
 			 **/
+
+			ROS_DEBUG("PathPlanningWidget::clearAllPoints_slot");
+
 			QAbstractItemModel *model = ui_.treeView->model();
 			model->removeRows(0,model->rowCount());
 			selected_waypoint_ = -1 ;
@@ -636,36 +642,24 @@ namespace moveit_cartesian_plan_plugin
 			Q_EMIT clearAllPoints_signal();
 		}
 
-		void PathPlanningWidget::setAddPointUIStartPos(const std::string robot_model_frame,const tf::Transform end_effector)
-		{
+		void PathPlanningWidget::setAddPointUIStartPos(const std::string robot_model_frame,const tf::Transform end_effector) {
 			/**
 			 * Setting the default values for the Add New Way-Point from the RQT.
 			 * The information is taken to correspond to the pose of the loaded Robot end-effector.
 			 **/
 
-			tf::Vector3 p = end_effector.getOrigin();
-			tfScalar rx,ry,rz;
-			end_effector.getBasis().getRPY(rx,ry,rz,1);
+			ROS_DEBUG("PathPlanningWidget::setAddPointUIStartPos");
 
-			rx = RAD2DEG(rx);
-			ry = RAD2DEG(ry);
-			rz = RAD2DEG(rz);
-
-			// set up the starting values for the lineEdit of the positions
-			ui_.newWaypointX->setValue(p.x());
-			ui_.newWaypointY->setValue(p.y());
-			ui_.newWaypointZ->setValue(p.z());
-			// set up the starting values for the lineEdit of the orientations, in Euler angles
-			ui_.newWaypointRx->setValue(rx);
-			ui_.newWaypointRy->setValue(ry);
-			ui_.newWaypointRz->setValue(rz);
+			ui_.referenceFrameInput->setText(QString::fromStdString(robot_model_frame));
+			setNewWaypointInputs(end_effector);
 		}
 
-		void PathPlanningWidget::updateCurrentPositionDisplay(const std::string, const tf::Transform end_effector)
-		{
+		void PathPlanningWidget::updateCurrentPositionDisplay(const std::string, const tf::Transform end_effector) {
 			/*! Setting the default values for the Add New Way-Point from the RQT.
 				The information is taken to correspond to the pose of the loaded Robot end-effector.
 			*/
+
+			ROS_DEBUG("PathPlanningWidget::updateCurrentPositionDisplay");
 
 			tf::Vector3 p = end_effector.getOrigin();
 			tfScalar rx,ry,rz;
@@ -685,45 +679,53 @@ namespace moveit_cartesian_plan_plugin
 			ui_.currentPositionRz->setValue(rz);
 		}
 
-		void PathPlanningWidget::cartesianPathStartedHandler()
-		{
+		void PathPlanningWidget::cartesianPathStartedHandler() {
 			/**
 			 * Disable the RQT Widget when the Cartesian Path is executing.
 			 **/
+
+			ROS_DEBUG("PathPlanningWidget::cartesianPathStartedHandler");
+
 			ui_.tabWidget->setEnabled(false);
 			ui_.targetPoint->setEnabled(false);
 		}
 
-		void PathPlanningWidget::cartesianPathFinishedHandler()
-		{
+		void PathPlanningWidget::cartesianPathFinishedHandler() {
 			/**
 			 * Enable the RQT Widget when the Cartesian Path execution is completed.
 			 **/
+
+			ROS_DEBUG("PathPlanningWidget::cartesianPathFinishedHandler");
+
 			ui_.tabWidget->setEnabled(true);
 			ui_.targetPoint->setEnabled(true);
 
 		}
 
-		void PathPlanningWidget::cartPathCompleted_slot(double fraction)
-		{
+		void PathPlanningWidget::cartPathCompleted_slot(double fraction) {
 			/**
 			 * Get the information of what is the percentage of completion of the Planned Cartesian path from the
 			 * Cartesian Path Planner class and display it in Qt label.
 			 **/
+
+			ROS_DEBUG("PathPlanningWidget::cartPathCompleted_slot");
+
 			fraction = fraction*100.0;
 			fraction = std::floor(fraction * 100 + 0.5)/100;
 
 			ui_.lbl_cartPathCompleted->setText("Cartesian path " + QString::number(fraction) + "% completed.");
 		}
 
-		void PathPlanningWidget::moveToHomeFromUI()
-		{
+		void PathPlanningWidget::moveToHomeFromUI() {
+			ROS_DEBUG("PathPlanningWidget::moveToHomeFromUI");
+
 			sendCartTrajectoryParamsFromUI();
 			Q_EMIT moveToHomeFromUI_signal();
 		}
 
-		void PathPlanningWidget::setCartesianImpedanceParamsUI()
-		{
+		void PathPlanningWidget::setCartesianImpedanceParamsUI() {
+			ROS_DEBUG("PathPlanningWidget::setCartesianImpedanceParamsUI");
+
 			cartesian_impedance_msgs::SetCartesianImpedancePtr cart_vals(new cartesian_impedance_msgs::SetCartesianImpedance);
 
 			//stiffness Ttranslational
@@ -781,8 +783,9 @@ namespace moveit_cartesian_plan_plugin
 			cart_vals->null_space_params.stiffness.clear();
 		}
 
-		void PathPlanningWidget::setCartesianFTParamsUI()
-		{
+		void PathPlanningWidget::setCartesianFTParamsUI() {
+			ROS_DEBUG("PathPlanningWidget::setCartesianFTParamsUI");
+
 			cartesian_impedance_msgs::SetCartesianForceCtrlPtr ft_vals(new cartesian_impedance_msgs::SetCartesianForceCtrl);
 			QByteArray dof = ui_.combo_DOF_FT->currentText().toLatin1();
 			ft_vals->DOF = dof.data();
@@ -794,6 +797,8 @@ namespace moveit_cartesian_plan_plugin
 		}
 
 		void PathPlanningWidget::on_copyCurrentPoseButton_clicked() {
+			ROS_DEBUG("PathPlanningWidget::on_copyCurrentPoseButton_clicked");
+
 			ui_.newWaypointX->setValue(ui_.currentPositionX->value());
 			ui_.newWaypointY->setValue(ui_.currentPositionY->value());
 			ui_.newWaypointZ->setValue(ui_.currentPositionZ->value());
@@ -805,6 +810,8 @@ namespace moveit_cartesian_plan_plugin
 		}
 
 		void PathPlanningWidget::on_moveToNewPositionButton_clicked() {
+			ROS_DEBUG("PathPlanningWidget::on_moveToNewPositionButton_clicked");
+
 			sendCartTrajectoryParamsFromUI();
 
 			double rx,ry,rz;
@@ -829,6 +836,8 @@ namespace moveit_cartesian_plan_plugin
 		}
 
 		void PathPlanningWidget::on_moveToWaypointButton_clicked() {
+			ROS_DEBUG("PathPlanningWidget::on_moveToWaypointButton_clicked");
+
 			if (selected_waypoint_ < 0) {
 				return;
 			}
@@ -843,6 +852,8 @@ namespace moveit_cartesian_plan_plugin
 		}
 
 		void PathPlanningWidget::on_moveWaypointUpButton_clicked() {
+			ROS_DEBUG("PathPlanningWidget::on_moveWaypointUpButton_clicked");
+
 			if (1 > selected_waypoint_) {
 				return;
 			}
@@ -854,6 +865,8 @@ namespace moveit_cartesian_plan_plugin
 		}
 
 		void PathPlanningWidget::on_moveWaypointDownButton_clicked() {
+			ROS_DEBUG("PathPlanningWidget::on_moveWaypointDownButton_clicked");
+
 			QAbstractItemModel *model = ui_.treeView->model();
 			const int rows = model->rowCount() ;
 
@@ -868,9 +881,9 @@ namespace moveit_cartesian_plan_plugin
 		}
 
 		void PathPlanningWidget::setNewWaypointInputs(const tf::Transform& pose) {
-			//ROS_INFO_STREAM("set new Waypoints called");
+			ROS_DEBUG("PathPlanningWidget::setNewWaypointInputs");
 
-			tf::Vector3 p = pose.getOrigin();
+			tf::Vector3 origin = pose.getOrigin();
 			tfScalar rx,ry,rz;
 			pose.getBasis().getRPY(rx,ry,rz,1);
 
@@ -878,22 +891,33 @@ namespace moveit_cartesian_plan_plugin
 			ry = RAD2DEG(ry);
 			rz = RAD2DEG(rz);
 
-			// set up the starting values for the lineEdit of the positions
-			ui_.newWaypointX->setValue(p.x());
-			ui_.newWaypointY->setValue(p.y());
-			ui_.newWaypointZ->setValue(p.z());
+			// set up the values for the lineEdit of the positions
+
+			const QSignalBlocker blocker_x(ui_.newWaypointX);
+			const QSignalBlocker blocker_y(ui_.newWaypointY);
+			const QSignalBlocker blocker_z(ui_.newWaypointZ);
+			const QSignalBlocker blocker_rx(ui_.newWaypointRx);
+			const QSignalBlocker blocker_ry(ui_.newWaypointRy);
+			const QSignalBlocker blocker_rz(ui_.newWaypointRz);
+
+			ui_.newWaypointX->setValue(origin.x());
+			ui_.newWaypointY->setValue(origin.y());
+			ui_.newWaypointZ->setValue(origin.z());
 			// set up the starting values for the lineEdit of the orientations, in Euler angles
 			ui_.newWaypointRx->setValue(rx);
 			ui_.newWaypointRy->setValue(ry);
 			ui_.newWaypointRz->setValue(rz);
+
+			//ROS_INFO_STREAM("PathPlanningWidget::setNewWaypointInputs finished");
 		}
 
 		void PathPlanningWidget::emitNewWaypointInputValueChangedSignal() {
-			//ROS_INFO("Sending newWaypointInput_valueChanged signal");
+			ROS_DEBUG("PathPlanningWidget::emitNewWaypointInputValueChangedSignal");
 			Q_EMIT newWaypointInputValueChanged(getNewWaypointInputValue());
 		}
 
 		void PathPlanningWidget::newWaypointValueChanged(double) {
+			ROS_DEBUG("PathPlanningWidget::newWaypointValueChanged");
 			emitNewWaypointInputValueChangedSignal();
 		}
 	}

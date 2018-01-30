@@ -5,8 +5,7 @@
 namespace moveit_cartesian_plan_plugin
 {
 
-	AddWayPoint::AddWayPoint(QWidget *parent):rviz::Panel(parent)//, tf_()
-	{
+	AddWayPoint::AddWayPoint(QWidget *parent):rviz::Panel(parent) {
 		/**
 		 * The constructor sets the Object name, resets the Interactive Marker server.
 		 * It initialize the subscriber to the mouse click topic and registers the call back to a mouse click event.
@@ -141,9 +140,9 @@ namespace moveit_cartesian_plan_plugin
 		 **/
 		rviz::Panel::load(config);
 		QString text_entry;
+
 		ROS_INFO_STREAM("rviz: Initializing the user interaction planning panel");
-		if(config.mapGetString("TextEntry",&text_entry))
-		{
+		if(config.mapGetString("TextEntry",&text_entry)) {
 			ROS_INFO_STREAM("Loaded TextEntry with value: "<<text_entry.toStdString());
 		}
 
@@ -153,13 +152,13 @@ namespace moveit_cartesian_plan_plugin
 	void AddWayPoint::save(rviz::Config config) const
 	{
 		/// Allowing the user to save the current configuration of the panel
-		ROS_INFO_STREAM("Saving configuration");
+		ROS_DEBUG("AddWayPoint::save");
 		rviz::Panel::save(config);
 		config.mapSetValue("TextEntry",QString::fromStdString( std::string("test_field")));
 	}
 
 	void AddWayPoint::swapWaypoints(const int index1, const int index2) {
-		ROS_INFO_STREAM("Swapping waypoints "<<index1<<" and "<<index2);
+		ROS_DEBUG_STREAM("AddWayPoint::swapWaypoints("<<index1<<","<<index2<<")");
 
 		Waypoint tmp = waypoints_[index1] ;
 		waypoints_[index1] = waypoints_[index2];
@@ -169,13 +168,13 @@ namespace moveit_cartesian_plan_plugin
 		pointPoseUpdatedRViz(waypoints_[index2], index2);
 	}
 
-	void AddWayPoint::addPointFromUI(const Waypoint point_pos)
-	{
+	void AddWayPoint::addPointFromUI(const Waypoint point_pos) {
 		/**
 		 * Function for handling the signal of the RQT to add a new Way-Point in the RViz environment.
 		 **/
 
-		ROS_INFO("Point Added");
+		ROS_DEBUG_STREAM("AddWayPoint::addPointFromUI("<<point_pos.name_<<")");
+
 		waypoints_.push_back(point_pos);
 		Q_EMIT addPointRViz(point_pos, count_);
 		makeArrow(point_pos,count_);
@@ -183,8 +182,7 @@ namespace moveit_cartesian_plan_plugin
 		server_->applyChanges();
 	}
 
-	void AddWayPoint::processFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback )
-	{
+	void AddWayPoint::processFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback ) {
 		/**
 		 * This function is one of the most essential ones since it handles the events of the InteractiveMarkers from
 		 * the User in the RViz environment.
@@ -198,7 +196,9 @@ namespace moveit_cartesian_plan_plugin
 		 * functions to change their state depending on the item selected from the menu.
 		 **/
 
-		//ROS_INFO_STREAM("Received input for marker "<<feedback->marker_name);
+		//return;
+
+		ROS_DEBUG_STREAM("AddWayPoint::processFeedback("<<feedback->marker_name<<")");
 
 		switch ( feedback->event_type ) {
 			case visualization_msgs::InteractiveMarkerFeedback::BUTTON_CLICK: {
@@ -268,7 +268,7 @@ namespace moveit_cartesian_plan_plugin
 			}
 		}
 
-		server_->applyChanges();
+		//server_->applyChanges();
 	}
 
 	void AddWayPoint::waypointUpdated(const Waypoint &point_pos, const int index)
@@ -285,6 +285,8 @@ namespace moveit_cartesian_plan_plugin
 		 * Way-Point, the corresponding position of the vector that stores all the poses for the Way-Points is updated
 		 * as well.
 		 **/
+
+		ROS_DEBUG("AddWayPoint::waypointUpdated");
 
 		geometry_msgs::Pose pose;
 		tf::poseTFToMsg(point_pos.pose_, pose);
@@ -305,12 +307,14 @@ namespace moveit_cartesian_plan_plugin
 		server_->applyChanges();
 	}
 
-	Marker AddWayPoint::makeWayPoint( InteractiveMarker &msg )
-	{
+	Marker AddWayPoint::makeWayPoint( InteractiveMarker &msg ) {
 		/**
 		 * Define a type and properties of a Marker for the Way-Point.
 		 * This will be use as a base to define the shape, color and scale of the InteractiveMarker for the Way-Points.
 		 **/
+
+		ROS_DEBUG("AddWayPoint::makeWayPoint");
+
 		Marker marker;
 
 		marker.type = marker.type = Marker::MESH_RESOURCE;
@@ -323,8 +327,8 @@ namespace moveit_cartesian_plan_plugin
 		return marker;
 	}
 
-	InteractiveMarkerControl& AddWayPoint::makeArrowControlDefault( InteractiveMarker &msg )
-	{
+	InteractiveMarkerControl& AddWayPoint::makeArrowControlDefault( InteractiveMarker &msg ) {
+		ROS_DEBUG("AddWayPoint::makeArrowControlDefault");
 
 		InteractiveMarkerControl control_menu;
 		control_menu.always_visible = true;
@@ -349,6 +353,8 @@ namespace moveit_cartesian_plan_plugin
 	}
 
 	InteractiveMarkerControl& AddWayPoint::makeArrowControlDetails( InteractiveMarker &msg ) {
+		ROS_DEBUG("AddWayPoint::makeArrowControlDetails");
+
 		InteractiveMarkerControl control_menu;
 		control_menu.always_visible = true;
 
@@ -419,6 +425,8 @@ namespace moveit_cartesian_plan_plugin
 		 * that a new Way-Point has been added.
 		 */
 
+		ROS_DEBUG("AddWayPoint::makeArrow");
+
 		InteractiveMarker interact_marker;
 
 		ROS_INFO_STREAM("Markers frame is: "<< target_frame_);
@@ -447,7 +455,7 @@ namespace moveit_cartesian_plan_plugin
 	}
 
 	void AddWayPoint::waypointPreviewPoseUpdated(const tf::Transform& pose) {
-		//ROS_INFO_STREAM("updating marker") ;
+		ROS_DEBUG("AddWayPoint::waypointPreviewPoseUpdated") ;
 
 		geometry_msgs::Pose pose_msg;
 		tf::poseTFToMsg(pose, pose_msg);
@@ -465,6 +473,8 @@ namespace moveit_cartesian_plan_plugin
 		 * Handling the events from the clicked Menu Items for the Control of the Way-Point.
 		 * Here the user can change the control either to freely move the Way-Point or get the 6DOF pose control option.
 		 **/
+
+		ROS_DEBUG("AddWayPoint::changeMarkerControlAndPose");
 
 		InteractiveMarker interact_marker ;
 		server_->get(marker_name, interact_marker);
@@ -495,7 +505,7 @@ namespace moveit_cartesian_plan_plugin
 		 * all the Way-Points.
 		 **/
 
-		ROS_INFO_STREAM("Deleting point "<<index);
+		ROS_DEBUG_STREAM("AddWayPoint::pointDeleted("<<index<<")");
 
 		for( int i=0;i<waypoints_.size();i++) {
 			ROS_INFO_STREAM(
@@ -519,9 +529,6 @@ namespace moveit_cartesian_plan_plugin
 		}
 
 		//InteractiveMarker interact_marker;
-		//server_->erase(std::string(""+index).c_str());
-
-		//for(int i=index+1; i<=count_;i++) {
 
 		ROS_INFO_STREAM("count_: "<<count_);
 		for(int i=count_-1; i>=index; i--) {
@@ -546,6 +553,9 @@ namespace moveit_cartesian_plan_plugin
 		/**
 		 * Define the Marker Arrow which the user can add new Way-Points with.
 		 */
+
+		ROS_DEBUG("AddWayPoint::makeInteractiveArrow");
+
 		//define a marker
 		Marker marker;
 
@@ -565,6 +575,8 @@ namespace moveit_cartesian_plan_plugin
 		/**
 		 * Set the User Interactive Marker with 6DOF control.
 		 **/
+
+		ROS_DEBUG("AddWayPoint::makeInteractiveMarkerControl");
 
 		// //control for button interaction
 		InteractiveMarkerControl control_button;
@@ -633,6 +645,8 @@ namespace moveit_cartesian_plan_plugin
 		 * Create the User Interactive Marker and update the RViz environment.
 		 **/
 
+		ROS_DEBUG("AddWayPoint::makeInteractiveMarker");
+
 		InteractiveMarker inter_arrow_marker_;
 		inter_arrow_marker_.header.frame_id = target_frame_;
 		inter_arrow_marker_.scale = ARROW_INTERACTIVE_SCALE_;
@@ -658,6 +672,9 @@ namespace moveit_cartesian_plan_plugin
 		/**
 		 * Get the vector of all Way-Points and convert it to geometry_msgs::Pose and send Qt signal when ready.
 		 **/
+
+		ROS_DEBUG("AddWayPoint::parseWayPoints");
+
 		geometry_msgs::Pose target_pose;
 		std::vector<geometry_msgs::Pose> waypoints;
 
@@ -676,6 +693,9 @@ namespace moveit_cartesian_plan_plugin
 		 * This function opens a Qt Dialog where the user can set the name of the Way-Points file and the location.
 		 * Furthermore, it parses the way-points into a format that could be also loaded into the Plugin.
 		 **/
+
+		ROS_DEBUG("AddWayPoint::saveWayPointsToFile");
+
 		QString fileName = QFileDialog::getSaveFileName(this, tr("Save Way Points"), ".yaml", tr("Way Points (*.yaml);;All Files (*)"));
 
 		if (fileName.isEmpty()) {
@@ -725,8 +745,9 @@ namespace moveit_cartesian_plan_plugin
 		}
 	}
 
-	void AddWayPoint::clearAllPointsRViz()
-	{
+	void AddWayPoint::clearAllPointsRViz() {
+		ROS_DEBUG("AddWayPoint::clearAllPointsRViz");
+
 		waypoints_.clear();
 		server_->clear();
 		//delete the waypoints_pos vector
@@ -735,8 +756,9 @@ namespace moveit_cartesian_plan_plugin
 		server_->applyChanges();
 	}
 
-	void AddWayPoint::wayPointOutOfIK_slot(int point_number,int out)
-	{
+	void AddWayPoint::wayPointOutOfIK_slot(int point_number,int out) {
+		ROS_DEBUG_STREAM("AddWayPoint::wayPointOutOfIK_slot("<<point_number<<","<<out<<")");
+
 		InteractiveMarker interact_marker;
 		visualization_msgs::Marker point_marker;
 		std::stringstream marker_name;
@@ -770,13 +792,14 @@ namespace moveit_cartesian_plan_plugin
 		server_->insert( interact_marker);
 	}
 
-	void AddWayPoint::getRobotModelFrame_slot(const std::string robot_model_frame,const tf::Transform end_effector)
-	{
+	void AddWayPoint::getRobotModelFrame_slot(const std::string robot_model_frame,const tf::Transform end_effector) {
 		/**
 		 * Set the frame of the all the InteractiveMarkers to correspond to the base of the loaded Robot Model.
 		 * This function also initializes the count of the Way-Points and adds the User Interactive Marker to the scene
 		 * and the RQT Widget.
 		 **/
+
+		ROS_DEBUG("AddWayPoint::getRobotModelFrame_slot");
 
 		target_frame_.assign(robot_model_frame);
 		ROS_INFO_STREAM_ONCE("The robot model frame is: " << target_frame_);

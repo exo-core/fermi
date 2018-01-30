@@ -101,11 +101,12 @@ void GenerateCartesianPath::setCartParams(double plan_time,double cart_step_size
 	 * These parameters correspond to the ones that the user has entered or the default ones before the execution of the Cartesian Path Planner.
 	 **/
 
-	ROS_INFO_STREAM("MoveIt and Cartesian Path parameters from UI:\n MoveIt Plan Time:"<<plan_time
-				  <<"\n Cartesian Path Step Size:"<<cart_step_size
-				  <<"\n Jump Threshold:"<<cart_jump_thresh
-				  <<"\n Replanning:"<<moveit_replan
-				  <<"\n Avoid Collisions:"<<avoid_collisions);
+	ROS_INFO_STREAM("MoveIt and Cartesian Path parameters from UI:"
+		<<"\n MoveIt Plan Time: "<<plan_time
+		<<"\n Cartesian Path Step Size: "<<cart_step_size
+		<<"\n Jump Threshold: "<<cart_jump_thresh
+		<<"\n Replanning: "<<moveit_replan
+		<<"\n Avoid Collisions: "<<avoid_collisions);
 
 	PLAN_TIME_        = plan_time;
 	MOVEIT_REPLAN_    = moveit_replan;
