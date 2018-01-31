@@ -18,6 +18,8 @@
 
 GenerateCartesianPath::GenerateCartesianPath(QObject *parent)
 {
+	ROS_DEBUG("GenerateCartesianPath::GenerateCartesianPath");
+
 	//to add initializations
 	init();
 }
@@ -27,6 +29,8 @@ GenerateCartesianPath::~GenerateCartesianPath()
 	/**
 	 * The destructor resets the moveit_group_ and the kinematic_state of the robot.
 	 **/
+
+	ROS_DEBUG("GenerateCartesianPath::~GenerateCartesianPath");
 
 	moveit_group_.reset();
 	kinematic_state_.reset();
@@ -43,6 +47,8 @@ void GenerateCartesianPath::init()
 	 * - Robot model which handles getting the Robot Model
 	 * - Joint Model group which are necessary for checking if Way-Point is outside the IK Solution
 	 **/
+
+	ROS_DEBUG("GenerateCartesianPath::init");
 
 	selected_plan_group_ = 0;
 	robot_model_loader_ = RobotModelLoaderPtr(new robot_model_loader::RobotModelLoader("robot_description"));
@@ -101,7 +107,9 @@ void GenerateCartesianPath::setCartParams(double plan_time,double cart_step_size
 	 * These parameters correspond to the ones that the user has entered or the default ones before the execution of the Cartesian Path Planner.
 	 **/
 
-	ROS_INFO_STREAM("MoveIt and Cartesian Path parameters from UI:"
+	ROS_DEBUG("GenerateCartesianPath::setCartParams");
+
+	ROS_INFO_STREAM("Updating MoveIt and Cartesian Path parameters:"
 		<<"\n MoveIt Plan Time: "<<plan_time
 		<<"\n Cartesian Path Step Size: "<<cart_step_size
 		<<"\n Jump Threshold: "<<cart_jump_thresh
@@ -117,6 +125,8 @@ void GenerateCartesianPath::setCartParams(double plan_time,double cart_step_size
 
 void GenerateCartesianPath::moveToPoses(std::vector<geometry_msgs::Pose> waypoints)
 {
+	ROS_DEBUG("GenerateCartesianPath::moveToPoses");
+
 	Q_EMIT cartesianPathExecuteStarted();
 
 	moveit_group_->setPlanningTime(PLAN_TIME_);
@@ -160,7 +170,8 @@ void GenerateCartesianPath::cartesianPathHandler(std::vector<geometry_msgs::Pose
 	 * This prevents the RViz and the Plugin to lock.
 	 **/
 
-	ROS_INFO("Starting concurrent process for Cartesian Path");
+	ROS_DEBUG("GenerateCartesianPath::cartesianPathHandler");
+
 	QFuture<void> future = QtConcurrent::run(this, &GenerateCartesianPath::moveToPoses, waypoints);
 }
 
@@ -173,6 +184,8 @@ void GenerateCartesianPath::checkWayPointValidity(const geometry_msgs::Pose& way
 	 * within the valid IK solution for the Robot. In the case when a point is outside the valid IK solution this
 	 * function send a signal to the RViz environment to update the color of the Way-Point.
 	 **/
+
+	ROS_DEBUG("GenerateCartesianPath::checkWayPointValidity");
 
 	bool found_ik = kinematic_state_->setFromIK(joint_model_group_, waypoint, 3, 0.006);
 
@@ -189,12 +202,12 @@ void GenerateCartesianPath::checkWayPointValidity(const geometry_msgs::Pose& way
 void GenerateCartesianPath::initRvizDone()
 {
 	/**
-	 * Once the initialization of the RViz is has finished, this function sends the pose of the robot end-effector and the name of the base frame to the RViz enviroment.
-	 * The RViz enviroment sets the User Interactive Marker pose and Add New Way-Point RQT Layout default values based on the end-effector starting position.
+	 * Once the initialization of the RViz is has finished, this function sends the pose of the robot end-effector and the name of the base frame to the RViz environment.
+	 * The RViz environment sets the User Interactive Marker pose and Add New Way-Point RQT Layout default values based on the end-effector starting position.
 	 * The transformation frame of the InteractiveMarker is set based on the robot PoseReferenceFrame.
 	 **/
 
-	ROS_INFO("RViz is done now we need to emit the signal");
+	ROS_DEBUG("GenerateCartesianPath::initRvizDone");
 
 	end_effector_frame_ = moveit_group_->getEndEffectorLink();
 
@@ -228,6 +241,8 @@ void GenerateCartesianPath::initRvizDone()
 
 void GenerateCartesianPath::moveToHome()
 {
+	ROS_DEBUG("GenerateCartesianPath::moveToHome");
+
 	geometry_msgs::Pose home_pose;
 	tf::poseTFToMsg(end_effector_,home_pose);
 
@@ -237,6 +252,8 @@ void GenerateCartesianPath::moveToHome()
 
 void GenerateCartesianPath::moveToPose(geometry_msgs::Pose pose)
 {
+	ROS_DEBUG("GenerateCartesianPath::moveToPose");
+
 	std::vector<geometry_msgs::Pose> waypoints;
 	waypoints.push_back(pose);
 
@@ -245,6 +262,8 @@ void GenerateCartesianPath::moveToPose(geometry_msgs::Pose pose)
 
 void GenerateCartesianPath::getSelectedGroupIndex(int index)
 {
+	ROS_DEBUG_STREAM("GenerateCartesianPath::getSelectedGroupIndex("<<index<<")");
+
 	selected_plan_group_ = index;
 
 	ROS_INFO_STREAM("selected name is:"<<group_names_[selected_plan_group_]);
@@ -265,8 +284,8 @@ void GenerateCartesianPath::getSelectedGroupIndex(int index)
 }
 
 void GenerateCartesianPath::emitCurrentState() {
-	//ROS_INFO_STREAM("end_effector_frame: "<<end_effector_frame_);
-	//ROS_INFO_STREAM("target_frame_: "<<target_frame_);
+	//ROS_DEBUG("GenerateCartesianPath::emitCurrentState");
+
 	if(!end_effector_frame_.empty()) {
 		tf::StampedTransform transform;
 		try{
@@ -281,5 +300,7 @@ void GenerateCartesianPath::emitCurrentState() {
 }
 
 void GenerateCartesianPath::processMessage( const sensor_msgs::JointState::ConstPtr& msg ) {
+	//ROS_DEBUG("GenerateCartesianPath::processMessage");
+
 	emitCurrentState();
 }

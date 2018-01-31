@@ -79,12 +79,12 @@ namespace moveit_cartesian_plan_plugin
 		path_generate_ = new GenerateCartesianPath();
 		set_cart_path_params_ = new SetCartesianImpedance();
 		set_cart_ft_params_ = new SetCartesianFTControl();
-		widget_ = new widgets::PathPlanningWidget("~");
+		widget_ = new PathPlanningWidget("~");
 		this->parentWidget()->resize(widget_->width(),widget_->height());
 		QHBoxLayout* main_layout = new QHBoxLayout(this);
 		main_layout->addWidget(widget_);
 
-		//! Inform the user that the RViz is initializing
+		/// Inform the user that the RViz is initializing
 		ROS_INFO("initializing..");
 
 		menu_handler_.insert( "Delete", boost::bind( &AddWayPoint::processFeedback, this, _1 ) );
@@ -196,18 +196,18 @@ namespace moveit_cartesian_plan_plugin
 		 * functions to change their state depending on the item selected from the menu.
 		 **/
 
-		//return;
-
 		ROS_DEBUG_STREAM("AddWayPoint::processFeedback("<<feedback->marker_name<<")");
 
 		switch ( feedback->event_type ) {
 			case visualization_msgs::InteractiveMarkerFeedback::BUTTON_CLICK: {
+				if (feedback->marker_name == POSE_PREVIEW_MARKER_NAME) {
+					// ROS_INFO_STREAM("on click feedback pose is"<<feedback->pose.position.x<<", "<<feedback->pose.position.y<<", "<<feedback->pose.position.z<<";");
 
-				Waypoint point_pos(feedback->marker_name);
-				tf::poseMsgToTF(feedback->pose,point_pos.pose_);
-				// ROS_INFO_STREAM("on click feedback pose is"<<feedback->pose.position.x<<", "<<feedback->pose.position.y<<", "<<feedback->pose.position.z<<";");
+					Waypoint point_pos(widget_->generateNewWaypointName());
+					tf::poseMsgToTF(feedback->pose, point_pos.pose_);
+					addPointFromUI(point_pos);
+				}
 
-				makeArrow(point_pos,count_);
 				break;
 			}
 			case visualization_msgs::InteractiveMarkerFeedback::POSE_UPDATE: {
@@ -218,7 +218,6 @@ namespace moveit_cartesian_plan_plugin
 					Q_EMIT previewMarkerPoseUpdated(pose);
 				}
 				else {
-
 					int index = std::atoi(feedback->marker_name.c_str());
 
 					if (0 <= index && index < count_) {
@@ -229,46 +228,49 @@ namespace moveit_cartesian_plan_plugin
 						Q_EMIT pointPoseUpdatedRViz(point_pos, index);
 					}
 					else {
-						ROS_WARN_STREAM("Received input from invalid marker: "<<feedback->marker_name);
+						ROS_WARN_STREAM("Received POSE_UPDATE feedback from invalid marker: "<<feedback->marker_name);
 					}
 				}
 
 				break;
 			}
 			case visualization_msgs::InteractiveMarkerFeedback::MENU_SELECT: {
-				//get the menu item which is pressed
-				interactive_markers::MenuHandler::EntryHandle menu_item = feedback->menu_entry_id;
-				interactive_markers::MenuHandler::CheckState state;
+				int index = std::atoi(feedback->marker_name.c_str());
 
-				menu_handler_.getCheckState(menu_item,state);
+				if (0 <= index && index < count_) {
+					//get the menu item which is pressed
+					interactive_markers::MenuHandler::EntryHandle menu_item = feedback->menu_entry_id;
+					interactive_markers::MenuHandler::CheckState state;
 
-				if(menu_item == 1) {
-					std::string marker_name = feedback->marker_name;
-					int marker_nr = atoi(marker_name.c_str());
-					pointDeleted(atoi( marker_name.c_str()));
-					break;
-				}
-				else {
-					if(state == interactive_markers::MenuHandler::UNCHECKED) {
-						ROS_INFO("The selected marker is shown with 6DOF control");
-						menu_handler_.setCheckState( menu_item, interactive_markers::MenuHandler::CHECKED );
-						geometry_msgs::Pose pose;
-						changeMarkerControlAndPose( feedback->marker_name.c_str(),true);
-						break;
+					menu_handler_.getCheckState(menu_item,state);
+
+					if(menu_item == 1) {
+						pointDeleted(index);
 					}
 					else {
-						menu_handler_.setCheckState( menu_item, interactive_markers::MenuHandler::UNCHECKED );
-						ROS_INFO("The selected marker is shown as default");
-						geometry_msgs::Pose pose;
-						changeMarkerControlAndPose( feedback->marker_name.c_str(),false);
-						break;
+						if(state == interactive_markers::MenuHandler::UNCHECKED) {
+							ROS_INFO("The selected marker is shown with 6DOF control");
+
+							menu_handler_.setCheckState(menu_item, interactive_markers::MenuHandler::CHECKED );
+							geometry_msgs::Pose pose;
+							changeMarkerControlAndPose(index,true);
+						}
+						else {
+							ROS_INFO("The selected marker is shown as default");
+
+							menu_handler_.setCheckState( menu_item, interactive_markers::MenuHandler::UNCHECKED );
+							geometry_msgs::Pose pose;
+							changeMarkerControlAndPose(index,false);
+						}
 					}
 				}
+				else {
+					ROS_WARN_STREAM("Received MENU_SELECT feedback from invalid marker: "<<feedback->marker_name);
+				}
+
 				break;
 			}
 		}
-
-		//server_->applyChanges();
 	}
 
 	void AddWayPoint::waypointUpdated(const Waypoint &point_pos, const int index)
@@ -292,10 +294,10 @@ namespace moveit_cartesian_plan_plugin
 		tf::poseTFToMsg(point_pos.pose_, pose);
 		std::stringstream s;
 
-		ROS_INFO_STREAM(
+		ROS_DEBUG_STREAM(
 				"Updating waypoint "<<index<<" to "
-									<<"["<<point_pos.pose_.getOrigin().x()<<", "<<point_pos.pose_.getOrigin().y()<<", "<<point_pos.pose_.getOrigin().z()<<"], "
-									<<"["<<point_pos.pose_.getRotation().x()<<", "<<point_pos.pose_.getRotation().y()<<", "<<point_pos.pose_.getRotation().z()<<"], "
+				<<"["<<point_pos.pose_.getOrigin().x()<<", "<<point_pos.pose_.getOrigin().y()<<", "<<point_pos.pose_.getOrigin().z()<<"], "
+				<<"["<<point_pos.pose_.getRotation().x()<<", "<<point_pos.pose_.getRotation().y()<<", "<<point_pos.pose_.getRotation().z()<<"], "
 		) ;
 
 		waypoints_[index] = point_pos;
@@ -468,7 +470,7 @@ namespace moveit_cartesian_plan_plugin
 		server_->applyChanges();
 	}
 
-	void AddWayPoint::changeMarkerControlAndPose(std::string marker_name,bool set_control) {
+	void AddWayPoint::changeMarkerControlAndPose(const int index, const bool set_control) {
 		/**
 		 * Handling the events from the clicked Menu Items for the Control of the Way-Point.
 		 * Here the user can change the control either to freely move the Way-Point or get the 6DOF pose control option.
@@ -477,7 +479,7 @@ namespace moveit_cartesian_plan_plugin
 		ROS_DEBUG("AddWayPoint::changeMarkerControlAndPose");
 
 		InteractiveMarker interact_marker ;
-		server_->get(marker_name, interact_marker);
+		server_->get(std::to_string(index), interact_marker);
 
 		if(set_control)
 		{
@@ -493,7 +495,9 @@ namespace moveit_cartesian_plan_plugin
 		server_->insert( interact_marker);
 		menu_handler_.apply(*server_,interact_marker.name);
 		server_->setCallback( interact_marker.name, boost::bind( &AddWayPoint::processFeedback, this, _1 ));
-		Q_EMIT onUpdatePosCheckIkValidity(interact_marker.pose,atoi(marker_name.c_str()));
+		Q_EMIT onUpdatePosCheckIkValidity(interact_marker.pose,index);
+
+		server_->applyChanges();
 
 	}
 

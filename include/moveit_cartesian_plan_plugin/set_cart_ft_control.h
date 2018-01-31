@@ -33,14 +33,14 @@ class SetCartesianFTControl: public QObject
 Q_OBJECT
 
 public:
-	//! Constructor for the Cartesian Force Control Parameters.
+	/// Constructor for the Cartesian Force Control Parameters.
 	SetCartesianFTControl(QObject* parent = 0);
-	//! Virtual Destructor for the Cartesian Force Control Parameters.
+	/// Virtual Destructor for the Cartesian Force Control Parameters.
 	virtual ~SetCartesianFTControl();
-	//! Initialization of the necessary Cartesian Force Control Parameters.
+	/// Initialization of the necessary Cartesian Force Control Parameters.
 	void init();
 public Q_SLOTS:
-	//! Get the Way-Points from the RViz enviroment and use them to generate Cartesian Path.
+	/// Get the Way-Points from the RViz environment and use them to generate Cartesian Path.
   void sendCartFTParams(cartesian_impedance_msgs::SetCartesianForceCtrlPtr cart_ft_params);
 
 Q_SIGNALS:

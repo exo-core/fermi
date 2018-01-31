@@ -33,18 +33,18 @@ class SetCartesianImpedance: public QObject
 Q_OBJECT
 
 public:
-	//! Constructor for the Cartesian Impedance Parameters.
+	/// Constructor for the Cartesian Impedance Parameters.
 	SetCartesianImpedance(QObject* parent = 0);
-	//! Virtual Destructor for the Cartesian Impedance Parameters.
+	/// Virtual Destructor for the Cartesian Impedance Parameters.
 	virtual ~SetCartesianImpedance();
-	//! Initialization of the necessary Cartesian Impedance Parameters.
+	/// Initialization of the necessary Cartesian Impedance Parameters.
 	void init();
 public Q_SLOTS:
-	//! Get the Way-Points from the RViz enviroment and use them to generate Cartesian Path.
+	/// Get the Way-Points from the RViz environment and use them to generate Cartesian Path.
 	void sendCartImpedanceParams(cartesian_impedance_msgs::SetCartesianImpedancePtr cart_impedance_params);
 
 Q_SIGNALS:
-	// //! Let the RViz that a Way-Point is outside the IK solution.
+	// /// Let the RViz that a Way-Point is outside the IK solution.
 	// void getCartImpedanceParams(cartesian_impedance_msgs::SetCartesianImpedance cart_impedance_params);
 
 private:

@@ -2,8 +2,8 @@
 // Created by arne on 22.01.18.
 //
 
-#ifndef PROJECT_WAYPOINT_H
-#define PROJECT_WAYPOINT_H
+#ifndef WAYPOINT_H
+#define WAYPOINT_H
 
 #include <string.h>
 #include <tf/tf.h>
@@ -23,4 +23,4 @@ namespace moveit_cartesian_plan_plugin {
 	};
 }
 
-#endif //PROJECT_WAYPOINT_H
+#endif //WAYPOINT_H
