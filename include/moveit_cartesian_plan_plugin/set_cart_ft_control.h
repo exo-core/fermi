@@ -19,14 +19,16 @@
 #ifndef SET_CARTESIAN_FT_CONTROL_H_
 #define SET_CARTESIAN_FT_CONTROL_H_
 
-/*!
- *  \brief     Class for setting up the Cartesian Force msgs and UI parameters.
- *  \details   The SetCartesianFTControl Class handles all the interactions with the Qt UI.
- 	 		   This Class inherits from the QObject superclass.
- 	 		   The concept of this class is to initialize all the necessary parameters for setting Cartesian Force parameters set from the UI..
- 	 		   It gets the necessary parameters for Cartesian Force and sends them via particular topic to the robot driver.
- *  \author    Risto Kojcev
- */
+/**
+ * @brief     Class for setting up the Cartesian Force msgs and UI parameters.
+ * @details   The SetCartesianFTControl Class handles all the interactions with the Qt UI.
+ *            This Class inherits from the QObject superclass.
+ *            The concept of this class is to initialize all the necessary parameters for setting Cartesian Force
+ *            parameters set from the UI..
+ *            It gets the necessary parameters for Cartesian Force and sends them via particular topic to the robot
+ *            driver.
+ * @author    Risto Kojcev
+ **/
 
 class SetCartesianFTControl: public QObject
 {

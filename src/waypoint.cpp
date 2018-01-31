@@ -1,7 +1,3 @@
-//
-// Created by arne on 22.01.18.
-//
-
 #include "../include/moveit_cartesian_plan_plugin/waypoint.h"
 
 namespace moveit_cartesian_plan_plugin {

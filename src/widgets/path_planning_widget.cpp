@@ -8,7 +8,7 @@ namespace moveit_cartesian_plan_plugin  {
 	{
 		/**
 		 * Constructor which calls the init() function.
-		 */
+		 **/
 
 		ROS_DEBUG_STREAM("PathPlanningWidget::PathPlanningWidget("<<ns<<")");
 
@@ -29,7 +29,7 @@ namespace moveit_cartesian_plan_plugin  {
 		 *   - the Jump Threshold for the IK solutions is set from 0.0 to 10000.0
 		 *   .
 		 *   .
-		 */
+		 **/
 
 		ROS_DEBUG("PathPlanningWidget::init");
 
@@ -148,7 +148,7 @@ namespace moveit_cartesian_plan_plugin  {
 	void PathPlanningWidget::sendCartTrajectoryParamsFromUI() {
 		/**
 		 * This function takes care of sending the User Entered parameters from the RQT to the Cartesian Path Planner.
-		 */
+		 **/
 
 		ROS_DEBUG("PathPlanningWidget::sendCartTrajectoryParamsFromUI");
 
@@ -169,7 +169,7 @@ namespace moveit_cartesian_plan_plugin  {
 	void PathPlanningWidget::initTreeView() {
 		/**
 		 * Initialize the Qt TreeView and set the initial value of the User Interaction arrow.
-		 */
+		 **/
 
 		ROS_DEBUG("PathPlanningWidget::initTreeView");
 
@@ -356,7 +356,7 @@ namespace moveit_cartesian_plan_plugin  {
 		/**
 		 * When the user deletes certain Way-Point either from the RViz or the RQT Widget the TreeView needs to delete
 		 * that particular row and update the state of the TreeWidget.
-		 */
+		 **/
 
 		ROS_DEBUG_STREAM("PathPlanningWidget::removeRow("<<index<<")");
 
@@ -429,7 +429,7 @@ namespace moveit_cartesian_plan_plugin  {
 		/**
 		 * When the user updates the position of the Way-Point or the User Interactive Marker, the information in the
 		 * TreeView also needs to be updated to correspond to the current pose of the InteractiveMarkers.
-		 */
+		 **/
 
 		ROS_DEBUG("PathPlanningWidget::pointPosUpdated_slot");
 
@@ -496,7 +496,7 @@ namespace moveit_cartesian_plan_plugin  {
 		/*! This function handles the user interactions in the TreeView Widget.
 		 *	The function captures an event of data change and updates the information in the TreeView and the RViz
 		 *  environment.
-		*/
+		 **/
 
 		ROS_DEBUG("PathPlanningWidget::treeViewDataChanged");
 		ROS_DEBUG_STREAM("Data changed. item: {row: "<<item.row()<<"; column: "<<item.column()<<"}");
@@ -642,9 +642,10 @@ namespace moveit_cartesian_plan_plugin  {
 	}
 
 	void PathPlanningWidget::updateCurrentPositionDisplay(const std::string, const tf::Transform end_effector) {
-		/*! Setting the default values for the Add New Way-Point from the RQT.
-			The information is taken to correspond to the pose of the loaded Robot end-effector.
-		*/
+		/**
+		 * Setting the default values for the Add New Way-Point from the RQT.
+		 * The information is taken to correspond to the pose of the loaded Robot end-effector.
+		 **/
 
 		ROS_DEBUG("PathPlanningWidget::updateCurrentPositionDisplay");
 

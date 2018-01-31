@@ -1,7 +1,3 @@
-//
-// Created by arne on 22.01.18.
-//
-
 #ifndef WAYPOINT_H
 #define WAYPOINT_H
 
@@ -9,6 +5,10 @@
 #include <tf/tf.h>
 
 namespace moveit_cartesian_plan_plugin {
+	/**
+	 *  @brief     A simple struct to store a waypoints geometric pose and name
+	 *  @author    Arne Peters
+	 **/
 	class Waypoint {
 		public:
 			Waypoint(const std::string& name) ;
