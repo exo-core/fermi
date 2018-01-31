@@ -2,7 +2,7 @@
 #include <boost/assign/list_of.hpp>
 #include <boost/assert.hpp>
 #include <math.h>
-#include <moveit_cartesian_plan_plugin/set_cart_ft_control.hpp>
+#include <moveit_cartesian_plan_plugin/set_cart_ft_control.h>
 
 
 SetCartesianFTControl::SetCartesianFTControl(QObject *parent)

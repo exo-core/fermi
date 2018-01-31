@@ -1,7 +1,9 @@
 #include <QtGui>
 
-#include <moveit_cartesian_plan_plugin/point_tree_item.hpp>
-#include <moveit_cartesian_plan_plugin/point_tree_model.hpp>
+#include <moveit_cartesian_plan_plugin/point_tree_item.h>
+#include <moveit_cartesian_plan_plugin/point_tree_model.h>
+
+#include <ros/ros.h>
 
 PointTreeModel::PointTreeModel(const QStringList &headers, const QString &data,
                      QObject *parent)
@@ -10,10 +12,13 @@ PointTreeModel::PointTreeModel(const QStringList &headers, const QString &data,
     QVector<QVariant> rootData;
     //QString header;
 
-    for(int i=0;i<headers.count();i++)
-         rootData << headers.at(i);
+    for(int i=0;i<headers.count();i++) {
+        rootData << headers.at(i);
+    }
 
     rootItem = new PointTreeItem(rootData);
+    connect(rootItem, SIGNAL(itemValueChanged(PointTreeItem&, const int, const QVariant&)), this, SLOT(treeItemValueChanged(PointTreeItem&, const int, const QVariant)));
+
     setupModelData(data.split(QString("\n")), rootItem);
 }
 
@@ -68,16 +73,19 @@ QVariant PointTreeModel::headerData(int section, Qt::Orientation orientation,
 
 QModelIndex PointTreeModel::index(int row, int column, const QModelIndex &parent) const
 {
-    if (parent.isValid() && parent.column() != 0)
+    if (parent.isValid() && parent.column() != 0) {
         return QModelIndex();
+    }
 
     PointTreeItem *parentItem = getItem(parent);
 
     PointTreeItem *childItem = parentItem->child(row);
-    if (childItem)
+    if (childItem) {
         return createIndex(row, column, childItem);
-    else
+    }
+    else {
         return QModelIndex();
+    }
 }
 
 bool PointTreeModel::insertColumns(int position, int columns, const QModelIndex &parent)
@@ -94,10 +102,9 @@ bool PointTreeModel::insertColumns(int position, int columns, const QModelIndex 
 bool PointTreeModel::insertRows(int position, int rows, const QModelIndex &parent)
 {
     PointTreeItem *parentItem = getItem(parent);
-    bool success;
 
     beginInsertRows(parent, position, position + rows - 1);
-    success = parentItem->insertChildren(position, rows, rootItem->columnCount());
+    bool success = parentItem->insertChildren(position, rows, rootItem->columnCount());
     endInsertRows();
 
     return success;
@@ -229,3 +236,14 @@ void PointTreeModel::setupModelData(const QStringList &lines, PointTreeItem *par
          number++;
      }
  }
+
+void PointTreeModel::treeItemValueChanged(PointTreeItem &item, const int column, const QVariant &value) {
+    //ROS_INFO_STREAM("Tree node changed signal");
+
+    if (item.parent() && item.parent() != rootItem) {
+        itemValueChanged(createIndex(item.childNumber(), column, item.parent()), value);
+    }
+    else {
+        itemValueChanged(index(item.childNumber(), column, QModelIndex()), value);
+    }
+}
