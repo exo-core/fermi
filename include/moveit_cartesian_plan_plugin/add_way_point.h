@@ -101,13 +101,15 @@ namespace moveit_cartesian_plan_plugin {
 			/// Slot for parsing the Way-Points before sending them to the MoveIt class.
 			void parseWayPoints();
 			/// Save all the Way-Points to a yaml file.
-			void saveWayPointsToFile();
+			void saveWayPointsToFile(const std::string& fileName);
 			/// Clear all the Way-Points
 			void clearAllPointsRViz();
 			/// Slot for handling the even when a way-point is out of the IK solution of the loaded robot.
 			void wayPointOutOfIK_slot(int point_number, int out);
 			/// Get the name of the Transformation frame of the Robot.
 			void getRobotModelFrame_slot(const std::string robot_model_frame, const tf::Transform end_effector);
+
+			void exportTrajectoryToFile(const std::string& file_name);
 
 		protected Q_SLOTS:
 			/// rviz::Panel virtual functions for loading Panel Configuration.
@@ -136,7 +138,7 @@ namespace moveit_cartesian_plan_plugin {
 			/// The class that GUI RQT User Interactions.
 			PathPlanningWidget* widget_;
 			/// The Object for the MoveIt components.
-			QObject* path_generate_;
+			GenerateCartesianPath* path_generate_;
 			/// The Object for setting Cartesian path parameters
 			QObject* set_cart_path_params_;
 			/// The Object for setting Cartesian Force control parameters

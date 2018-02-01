@@ -609,7 +609,13 @@ namespace moveit_cartesian_plan_plugin  {
 
 		ROS_DEBUG("PathPlanningWidget::on_savePathButton_clicked");
 
-		Q_EMIT savePathButtonClicked();
+		QString fileName = QFileDialog::getSaveFileName(this, tr("Save Way Points"), ".yaml", tr("Way Points (*.yaml);;All Files (*)"));
+
+		if (fileName.isEmpty()) {
+			return;
+		}
+
+		Q_EMIT savePathButtonClicked(fileName.toStdString());
 	}
 
 	void PathPlanningWidget::on_clearAllPointsButton_clicked() {
@@ -665,6 +671,19 @@ namespace moveit_cartesian_plan_plugin  {
 		ui_.currentPositionRx->setValue(rx);
 		ui_.currentPositionRy->setValue(ry);
 		ui_.currentPositionRz->setValue(rz);
+	}
+
+	void PathPlanningWidget::on_exportTrajectoryButton_clicked() {
+		ROS_DEBUG("PathPlanningWidget::on_exportTrajectoryButton_clicked");
+
+		QString fileName = QFileDialog::getSaveFileName(this, tr("Save Trajectory"), ".json", tr("Way Points (*.json);;All Files (*)"));
+
+		if (fileName.isEmpty()) {
+			return;
+		}
+
+		sendCartTrajectoryParamsFromUI();
+		Q_EMIT exportTrajectoryButtonClicked(fileName.toStdString());
 	}
 
 	void PathPlanningWidget::cartesianPathStartedHandler() {

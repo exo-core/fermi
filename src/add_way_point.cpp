@@ -105,11 +105,12 @@ namespace moveit_cartesian_plan_plugin
 		connect(widget_, SIGNAL(moveToPose_signal(const geometry_msgs::Pose&)), path_generate_, SLOT(moveToPose(const geometry_msgs::Pose&)));
 		connect(widget_, SIGNAL(moveToHomeFromUI_signal()), path_generate_, SLOT(moveToHome()));
 		connect(widget_, SIGNAL(parseWayPointBtn_signal()), this, SLOT(parseWayPoints()));
-		connect(widget_, SIGNAL(savePathButtonClicked()), this, SLOT(saveWayPointsToFile()));
+		connect(widget_, SIGNAL(savePathButtonClicked(const std::string&)), this, SLOT(saveWayPointsToFile(const std::string&)));
 		connect(widget_, SIGNAL(swapWaypoints_signal(const int, const int)), this, SLOT(swapWaypoints(const int, const int)));
 		connect(widget_, SIGNAL(clearAllPoints_signal()), this, SLOT(clearAllPointsRViz()));
 		connect(widget_, SIGNAL(sendSendSelectedPlanGroup(int)), path_generate_, SLOT(getSelectedGroupIndex(int)));
 		connect(widget_, SIGNAL(newWaypointInputValueChanged(const tf::Transform&)), this, SLOT(waypointPreviewPoseUpdated(const tf::Transform&)));
+		connect(widget_, SIGNAL(exportTrajectoryButtonClicked(const std::string&)), this, SLOT(exportTrajectoryToFile(const std::string&)));
 
 		connect(path_generate_, SIGNAL(getRobotModelFrame_signal(const std::string, const tf::Transform)),this,SLOT(getRobotModelFrame_slot(const std::string, const tf::Transform)));
 		connect(path_generate_, SIGNAL(getRobotModelFrame_signal(const std::string, const tf::Transform)),widget_,SLOT(setAddPointUIStartPos(const std::string, const tf::Transform)));
@@ -690,7 +691,7 @@ namespace moveit_cartesian_plan_plugin
 		Q_EMIT wayPoints_signal(waypoints);
 	}
 
-	void AddWayPoint::saveWayPointsToFile()
+	void AddWayPoint::saveWayPointsToFile(const std::string& fileName)
 	{
 		/**
 		 * Function for saving all the Way-Points into yaml file.
@@ -700,53 +701,79 @@ namespace moveit_cartesian_plan_plugin
 
 		ROS_DEBUG("AddWayPoint::saveWayPointsToFile");
 
-		QString fileName = QFileDialog::getSaveFileName(this, tr("Save Way Points"), ".yaml", tr("Way Points (*.yaml);;All Files (*)"));
-
-		if (fileName.isEmpty()) {
+		QFile file(QString::fromStdString(fileName));
+		if (!file.open(QIODevice::WriteOnly)) {
+			QMessageBox::information(this, tr("Unable to open file"),
+									 file.errorString());
+			file.close();
 			return;
 		}
-		else {
-			QFile file(fileName);
-			if (!file.open(QIODevice::WriteOnly)) {
-				QMessageBox::information(this, tr("Unable to open file"),
-										 file.errorString());
-				file.close();
-				return;
-			}
 
-			YAML::Emitter out;
-			out << YAML::BeginSeq;
+		YAML::Emitter out;
+		out << YAML::BeginSeq;
 
-			for(int i=0;i<waypoints_.size();i++) {
-				out << YAML::BeginMap;
-				std::vector <double> points_vec;
-				points_vec.push_back(waypoints_[i].pose_.getOrigin().x());
-				points_vec.push_back(waypoints_[i].pose_.getOrigin().y());
-				points_vec.push_back(waypoints_[i].pose_.getOrigin().z());
+		for(int i=0;i<waypoints_.size();i++) {
+			out << YAML::BeginMap;
+			std::vector <double> points_vec;
+			points_vec.push_back(waypoints_[i].pose_.getOrigin().x());
+			points_vec.push_back(waypoints_[i].pose_.getOrigin().y());
+			points_vec.push_back(waypoints_[i].pose_.getOrigin().z());
 
-				double rx, ry, rz;
+			double rx, ry, rz;
 
-				tf::Matrix3x3 m(waypoints_[i].pose_.getRotation());
-				m.getRPY(rx, ry, rz,1);
-				points_vec.push_back(RAD2DEG(rx));
-				points_vec.push_back(RAD2DEG(ry));
-				points_vec.push_back(RAD2DEG(rz));
+			tf::Matrix3x3 m(waypoints_[i].pose_.getRotation());
+			m.getRPY(rx, ry, rz,1);
+			points_vec.push_back(RAD2DEG(rx));
+			points_vec.push_back(RAD2DEG(ry));
+			points_vec.push_back(RAD2DEG(rz));
 
-				out << YAML::Key << "name";
-				out << YAML::Value << (i+1);
-				out << YAML::Key << "point";
-				out << YAML::Value << YAML::Flow << points_vec;
-				out << YAML::EndMap;
-			}
-
-
-			out << YAML::EndSeq;
-
-			std::ofstream myfile;
-			myfile.open (fileName.toStdString().c_str());
-			myfile << out.c_str();
-			myfile.close();
+			out << YAML::Key << "name";
+			out << YAML::Value << (i+1);
+			out << YAML::Key << "point";
+			out << YAML::Value << YAML::Flow << points_vec;
+			out << YAML::EndMap;
 		}
+
+
+		out << YAML::EndSeq;
+
+		std::ofstream myfile;
+		myfile.open (fileName.c_str());
+		myfile << out.c_str();
+		myfile.close();
+	}
+
+	void AddWayPoint::exportTrajectoryToFile(const std::string& file_name) {
+		ROS_INFO("ToDo: export trajectory");
+
+		QFile file(QString::fromStdString(file_name));
+		if (!file.open(QIODevice::WriteOnly)) {
+			QMessageBox::information(this, tr("Unable to open file"),
+									 file.errorString());
+			file.close();
+			return;
+		}
+
+		std::vector<geometry_msgs::Pose> poses(waypoints_.size()) ;
+		for(unsigned int i=0; i<waypoints_.size(); i++) {
+			tf::poseTFToMsg(waypoints_[i].pose_, poses[i]);
+		}
+
+		moveit_msgs::RobotTrajectory trajectory = path_generate_->planTrajectory(poses);
+
+
+		uint32_t serial_size = ros::serialization::serializationLength(trajectory);
+		boost::shared_array<uint8_t> buffer(new uint8_t[serial_size]);
+
+		ros::serialization::OStream stream(buffer.get(), serial_size);
+		ros::serialization::serialize(stream, trajectory);
+
+		std::ofstream myfile;
+		myfile.open (file_name.c_str());
+		for (unsigned int i=0; i<serial_size; i++) {
+			myfile << buffer[i];
+		}
+		myfile.close();
 	}
 
 	void AddWayPoint::clearAllPointsRViz() {

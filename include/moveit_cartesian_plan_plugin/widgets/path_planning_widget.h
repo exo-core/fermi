@@ -131,6 +131,8 @@ namespace moveit_cartesian_plan_plugin {
 			void on_moveWaypointUpButton_clicked();
 			void on_moveWaypointDownButton_clicked();
 
+			void on_exportTrajectoryButton_clicked();
+
 			/// Create a slot to call a signal on which the Move the robot to home position function is called
 			void on_moveToHomePoseButton_clicked();
 			/// set the read the Cartesian Impedance parameters from the UI and send them to the designated topic.
@@ -179,7 +181,7 @@ namespace moveit_cartesian_plan_plugin {
 			 **/
 			void parseWayPointBtn_signal();
 			/// Save to file button has been pressed.
-			void savePathButtonClicked();
+			void savePathButtonClicked(const std::string&);
 			/// Copy current pose button has been pressed.
 			void copyCurrentPoseButton_press();
 			/// Signal that clear all points button has been pressed.
@@ -192,6 +194,8 @@ namespace moveit_cartesian_plan_plugin {
 			 * its initial state.
 			 **/
 			void moveToHomeFromUI_signal();
+
+			void exportTrajectoryButtonClicked(const std::string&);
 
 			/// Signal to trigger a motion to a single pose
 			void moveToPose_signal(geometry_msgs::Pose);

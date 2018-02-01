@@ -1100,7 +1100,7 @@
        <item>
         <widget class="QPushButton" name="exportTrajectoryButton">
          <property name="text">
-          <string>Export Full Trajectory</string>
+          <string>Plan and Export Full Trajectory</string>
          </property>
         </widget>
        </item>
