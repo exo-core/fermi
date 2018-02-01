@@ -609,7 +609,7 @@ namespace moveit_cartesian_plan_plugin  {
 
 		ROS_DEBUG("PathPlanningWidget::on_savePathButton_clicked");
 
-		Q_EMIT saveToFileBtn_press();
+		Q_EMIT savePathButtonClicked();
 	}
 
 	void PathPlanningWidget::on_clearAllPointsButton_clicked() {

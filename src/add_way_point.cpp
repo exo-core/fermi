@@ -90,7 +90,7 @@ namespace moveit_cartesian_plan_plugin
 		menu_handler_.insert( "Delete", boost::bind( &AddWayPoint::processFeedback, this, _1 ) );
 		menu_handler_.setCheckState(menu_handler_.insert( "Fine adjustment", boost::bind( &AddWayPoint::processFeedback, this, _1 )),interactive_markers::MenuHandler::UNCHECKED);
 
-		connect(this, SIGNAL(wayPoints_signal(std::vector<geometry_msgs::Pose>)),path_generate_,SLOT(cartesianPathHandler(std::vector<geometry_msgs::Pose>)));
+		connect(this, SIGNAL(wayPoints_signal(const std::vector<geometry_msgs::Pose>&)),path_generate_,SLOT(cartesianPathHandler(const std::vector<geometry_msgs::Pose>&)));
 		connect(this, SIGNAL(addPointRViz(const Waypoint&,const int)), widget_, SLOT(insertRow(const Waypoint&,const int)));
 		connect(this, SIGNAL(pointPoseUpdatedRViz(const Waypoint&,const int)), widget_, SLOT(pointPosUpdated_slot(const Waypoint&,const int)));
 		connect(this, SIGNAL(pointDeleteRviz(int)),widget_,SLOT(removeRow(int)));
@@ -102,10 +102,10 @@ namespace moveit_cartesian_plan_plugin
 		connect(widget_, SIGNAL(pointPosUpdated_signal(const Waypoint&, const int)), this, SLOT(waypointUpdated(const Waypoint&, const int)));
 
 		connect(widget_, SIGNAL(cartesianPathParamsFromUI_signal(double, double, double, bool, bool )), path_generate_, SLOT(setCartParams(double, double, double, bool, bool)));
-		connect(widget_, SIGNAL(moveToPose_signal(geometry_msgs::Pose)), path_generate_, SLOT(moveToPose(geometry_msgs::Pose)));
+		connect(widget_, SIGNAL(moveToPose_signal(const geometry_msgs::Pose&)), path_generate_, SLOT(moveToPose(const geometry_msgs::Pose&)));
 		connect(widget_, SIGNAL(moveToHomeFromUI_signal()), path_generate_, SLOT(moveToHome()));
 		connect(widget_, SIGNAL(parseWayPointBtn_signal()), this, SLOT(parseWayPoints()));
-		connect(widget_, SIGNAL(saveToFileBtn_press()), this, SLOT(saveWayPointsToFile()));
+		connect(widget_, SIGNAL(savePathButtonClicked()), this, SLOT(saveWayPointsToFile()));
 		connect(widget_, SIGNAL(swapWaypoints_signal(const int, const int)), this, SLOT(swapWaypoints(const int, const int)));
 		connect(widget_, SIGNAL(clearAllPoints_signal()), this, SLOT(clearAllPointsRViz()));
 		connect(widget_, SIGNAL(sendSendSelectedPlanGroup(int)), path_generate_, SLOT(getSelectedGroupIndex(int)));

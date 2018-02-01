@@ -20,7 +20,7 @@
       <enum>Qt::CustomContextMenu</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab_MakePlan">
       <attribute name="title">
@@ -1094,6 +1094,13 @@
         <widget class="QPushButton" name="executePathButton">
          <property name="text">
           <string>Execute Cartesian Path</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="exportTrajectoryButton">
+         <property name="text">
+          <string>Export Full Trajectory</string>
          </property>
         </widget>
        </item>

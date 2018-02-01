@@ -53,13 +53,13 @@ class GenerateCartesianPath: public QObject
 
 	public Q_SLOTS:
 		/// Get the Way-Points from the RViz environment and use them to generate Cartesian Path.
-		void moveToPoses(std::vector<geometry_msgs::Pose> waypoints);
+		void moveToPoses(const std::vector<geometry_msgs::Pose>& waypoints);
 		/// Checks if the Way-Point is in the valid IK solution for the Robot.
 		void checkWayPointValidity(const geometry_msgs::Pose& waypoints,const int marker_name);
 		/// Slot for letting the Cartesian Path planning class that the RViz has finished with its initialization.
 		void initRvizDone();
 		/// Function for setting time consuming Cartesian Path Execution function to a separate thread.
-		void cartesianPathHandler(std::vector<geometry_msgs::Pose> waypoints);
+		void cartesianPathHandler(const std::vector<geometry_msgs::Pose>& waypoints);
 
 		/**
 		 * Get the User entered MoveIt and Cartesian Path parameters and pass them to the corresponding private
@@ -71,7 +71,10 @@ class GenerateCartesianPath: public QObject
 
 		/// Move to starting position of the robot. As loaded by default
 		void moveToHome();
-		void moveToPose(geometry_msgs::Pose pose);
+		/// Plan and execute cartesian path to specific tartget pose
+		void moveToPose(const geometry_msgs::Pose& pose);
+		///
+		moveit_msgs::RobotTrajectory planTrajectory(const std::vector<geometry_msgs::Pose>& waypoints);
 
 	Q_SIGNALS:
 		/// Let the RViz that a Way-Point is outside the IK solution.

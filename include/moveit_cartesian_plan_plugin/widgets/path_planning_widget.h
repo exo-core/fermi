@@ -179,7 +179,7 @@ namespace moveit_cartesian_plan_plugin {
 			 **/
 			void parseWayPointBtn_signal();
 			/// Save to file button has been pressed.
-			void saveToFileBtn_press();
+			void savePathButtonClicked();
 			/// Copy current pose button has been pressed.
 			void copyCurrentPoseButton_press();
 			/// Signal that clear all points button has been pressed.

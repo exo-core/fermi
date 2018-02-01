@@ -123,22 +123,16 @@ void GenerateCartesianPath::setCartParams(double plan_time,double cart_step_size
 	AVOID_COLLISIONS_ = avoid_collisions;
 }
 
-void GenerateCartesianPath::moveToPoses(std::vector<geometry_msgs::Pose> waypoints)
-{
-	ROS_DEBUG("GenerateCartesianPath::moveToPoses");
-
-	Q_EMIT cartesianPathExecuteStarted();
-
+moveit_msgs::RobotTrajectory GenerateCartesianPath::planTrajectory(const std::vector<geometry_msgs::Pose>& waypoints) {
 	moveit_group_->setPlanningTime(PLAN_TIME_);
 	moveit_group_->allowReplanning (MOVEIT_REPLAN_);
 
-	moveit::planning_interface::MoveGroupInterface::Plan plan;
 
-	moveit_msgs::RobotTrajectory trajectory_;
-	double fraction = moveit_group_->computeCartesianPath(waypoints,CART_STEP_SIZE_,CART_JUMP_THRESH_,trajectory_,AVOID_COLLISIONS_);
+	moveit_msgs::RobotTrajectory trajectory;
+	double fraction = moveit_group_->computeCartesianPath(waypoints,CART_STEP_SIZE_,CART_JUMP_THRESH_,trajectory,AVOID_COLLISIONS_);
 	robot_trajectory::RobotTrajectory rt(kmodel_, group_names_[selected_plan_group_]);
 
-	rt.setRobotTrajectoryMsg(*kinematic_state_, trajectory_);
+	rt.setRobotTrajectoryMsg(*kinematic_state_, trajectory);
 
 	ROS_INFO_STREAM("Pose reference frame: " << moveit_group_->getPoseReferenceFrame ());
 
@@ -146,14 +140,23 @@ void GenerateCartesianPath::moveToPoses(std::vector<geometry_msgs::Pose> waypoin
 	trajectory_processing::IterativeParabolicTimeParameterization iptp;
 	bool success = iptp.computeTimeStamps(rt);
 	ROS_INFO("Computed time stamp %s",success?"SUCCEDED":"FAILED");
-
-
 	// Get RobotTrajectory_msg from RobotTrajectory
-	rt.getRobotTrajectoryMsg(trajectory_);
-	// Finally plan and execute the trajectory
-	plan.trajectory_ = trajectory_;
-	ROS_INFO("Visualizing plan (cartesian path) (%.2f%% acheived)",fraction * 100.0);
-	Q_EMIT cartesianPathCompleted(fraction);
+	rt.getRobotTrajectoryMsg(trajectory);
+
+	return trajectory;
+}
+
+void GenerateCartesianPath::moveToPoses(const std::vector<geometry_msgs::Pose>& waypoints)
+{
+	ROS_DEBUG("GenerateCartesianPath::moveToPoses");
+
+	Q_EMIT cartesianPathExecuteStarted();
+
+	moveit::planning_interface::MoveGroupInterface::Plan plan;
+	plan.trajectory_ = planTrajectory(waypoints);
+
+	//ROS_INFO("Visualizing plan (cartesian path) (%.2f%% acheived)", fraction * 100.0);
+	//Q_EMIT cartesianPathCompleted(fraction);
 
 	moveit_group_->execute(plan);
 
@@ -162,7 +165,7 @@ void GenerateCartesianPath::moveToPoses(std::vector<geometry_msgs::Pose> waypoin
 	Q_EMIT cartesianPathExecuteFinished();
 }
 
-void GenerateCartesianPath::cartesianPathHandler(std::vector<geometry_msgs::Pose> waypoints)
+void GenerateCartesianPath::cartesianPathHandler(const std::vector<geometry_msgs::Pose>& waypoints)
 {
 	/**
 	 * Since the execution of the Cartesian path is time consuming and can lead to locking up of the Plugin and the RViz
@@ -177,7 +180,7 @@ void GenerateCartesianPath::cartesianPathHandler(std::vector<geometry_msgs::Pose
 
 
 
-void GenerateCartesianPath::checkWayPointValidity(const geometry_msgs::Pose& waypoint,const int point_number)
+void GenerateCartesianPath::checkWayPointValidity(const geometry_msgs::Pose& waypoint, const int point_number)
 {
 	/**
 	 * This function is called every time the user updates the pose of the Way-Point and checks if the Way-Point is
@@ -250,7 +253,7 @@ void GenerateCartesianPath::moveToHome()
 	moveToPose(home_pose);
 }
 
-void GenerateCartesianPath::moveToPose(geometry_msgs::Pose pose)
+void GenerateCartesianPath::moveToPose(const geometry_msgs::Pose& pose)
 {
 	ROS_DEBUG("GenerateCartesianPath::moveToPose");
 
