@@ -293,20 +293,23 @@ namespace moveit_cartesian_plan_plugin
 
 		geometry_msgs::Pose pose;
 		tf::poseTFToMsg(point_pos.pose_, pose);
-		std::stringstream s;
 
 		ROS_DEBUG_STREAM(
-				"Updating waypoint "<<index<<" to "
+				"Updating waypoint "<<index<<" to "<<"\""<<point_pos.name_<<"\" "
 				<<"["<<point_pos.pose_.getOrigin().x()<<", "<<point_pos.pose_.getOrigin().y()<<", "<<point_pos.pose_.getOrigin().z()<<"], "
 				<<"["<<point_pos.pose_.getRotation().x()<<", "<<point_pos.pose_.getRotation().y()<<", "<<point_pos.pose_.getRotation().z()<<"], "
 		) ;
 
 		waypoints_[index] = point_pos;
 
-		s << index;
+		InteractiveMarker interact_marker;
+		server_->get(std::to_string(index), interact_marker);
+		interact_marker.description = point_pos.name_;
+		interact_marker.pose = pose;
+		server_->insert( interact_marker);
+
 		Q_EMIT onUpdatePosCheckIkValidity(pose,index);
 
-		server_->setPose(s.str(),pose);
 		server_->applyChanges();
 	}
 
