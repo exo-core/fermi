@@ -145,6 +145,8 @@ namespace moveit_cartesian_plan_plugin {
 			QObject* set_cart_ft_params_;
 
 		private:
+			ros::NodeHandle nh_;
+			ros::ServiceClient serialization_client_ ;
 			/// Function for creating a way-point marker
 			Marker makeWayPoint( InteractiveMarker &msg );
 			/// Function to create the InteractionArrow Marker

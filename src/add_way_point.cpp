@@ -1,4 +1,5 @@
 #include <moveit_cartesian_plan_plugin/add_way_point.h>
+#include <moveit_cartesian_plan_plugin/ExportTrajectory.h>
 
 #define POSE_PREVIEW_MARKER_NAME "pose_preview"
 
@@ -16,6 +17,8 @@ namespace moveit_cartesian_plan_plugin
 
 		setObjectName("CartesianPathPlannerPlugin");
 		server_.reset( new interactive_markers::InteractiveMarkerServer("moveit_cartesian_plan_plugin","",false));
+
+		serialization_client_ = nh_.serviceClient<moveit_cartesian_plan_plugin::ExportTrajectory>("/export_trajectory");
 
 		WAY_POINT_COLOR_.r = 0.10;
 		WAY_POINT_COLOR_.g = 0.20;
@@ -747,12 +750,11 @@ namespace moveit_cartesian_plan_plugin
 	}
 
 	void AddWayPoint::exportTrajectoryToFile(const std::string& file_name) {
-		ROS_INFO("ToDo: export trajectory");
+		ROS_DEBUG("AddWayPoint::exportTrajectoryToFile");
 
 		QFile file(QString::fromStdString(file_name));
 		if (!file.open(QIODevice::WriteOnly)) {
-			QMessageBox::information(this, tr("Unable to open file"),
-									 file.errorString());
+			QMessageBox::information(this, tr("Unable to open file"), file.errorString());
 			file.close();
 			return;
 		}
@@ -762,21 +764,24 @@ namespace moveit_cartesian_plan_plugin
 			tf::poseTFToMsg(waypoints_[i].pose_, poses[i]);
 		}
 
-		moveit_msgs::RobotTrajectory trajectory = path_generate_->planTrajectory(poses);
+		moveit_cartesian_plan_plugin::ExportTrajectory srv;
+		srv.request.trajectory = path_generate_->planTrajectory(poses);
+		srv.request.file_name = file_name;
+		srv.request.overwrite = true;
 
-
-		uint32_t serial_size = ros::serialization::serializationLength(trajectory);
-		boost::shared_array<uint8_t> buffer(new uint8_t[serial_size]);
-
-		ros::serialization::OStream stream(buffer.get(), serial_size);
-		ros::serialization::serialize(stream, trajectory);
-
-		std::ofstream myfile;
-		myfile.open (file_name.c_str());
-		for (unsigned int i=0; i<serial_size; i++) {
-			myfile << buffer[i];
+		if (serialization_client_.call(srv)) {
+			if (!srv.response.success) {
+				ROS_ERROR_STREAM("Export failed: "<<srv.response.error);
+				QMessageBox::information(this, tr(srv.response.error.c_str()), file.errorString());
+			}
+			else {
+				ROS_INFO_STREAM("Trajectory exported to "<<file_name);
+			}
 		}
-		myfile.close();
+		else {
+			ROS_ERROR("Service call failed. Is trajectory serialization node running?");
+			QMessageBox::information(this, tr("Service call failed. Is trajectory serialization node running?"), file.errorString());
+		}
 	}
 
 	void AddWayPoint::clearAllPointsRViz() {

@@ -1,0 +1,15 @@
+# This service allows to save a trajectory to disk
+
+# Trajectory to export
+moveit_msgs/RobotTrajectory trajectory
+
+# File to write to
+string file_name
+
+# overwrite existing files
+bool overwrite
+
+---
+
+bool success
+string error

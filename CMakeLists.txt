@@ -3,20 +3,61 @@ cmake_minimum_required(VERSION 2.8.3)
 project(moveit_cartesian_plan_plugin)
 
 # Load catkin and all dependencies required for this package
-find_package(catkin REQUIRED COMPONENTS
-  interactive_markers
-  pluginlib
-  roscpp
-  rqt_gui
-  rqt_gui_cpp
-  rviz
-  visualization_msgs
-  moveit_ros_move_group
-  moveit_ros_planning_interface
-  tf
-  tf_conversions
-  cartesian_impedance_msgs
+find_package(
+	catkin REQUIRED COMPONENTS
+		interactive_markers
+		pluginlib
+		roscpp
+		rqt_gui
+		rqt_gui_cpp
+		rviz
+		visualization_msgs
+		moveit_msgs
+		moveit_ros_move_group
+		moveit_ros_planning_interface
+		message_generation
+		tf
+		tf_conversions
+		cartesian_impedance_msgs
 )
+
+################################################
+## Declare ROS messages, services and actions ##
+################################################
+
+## Generate messages in the 'msg' folder
+#add_message_files(
+#		FILES
+#		Box.msg
+#		POI.msg
+#		ARSlide.msg
+#		InspectionResult.msg
+#)
+
+## Generate services in the 'srv' folder
+add_service_files(
+	FILES
+		ExportTrajectory.srv
+		ImportTrajectory.srv
+)
+
+## Generate actions in the 'action' folder
+#add_action_files(
+#		FILES
+#		ARInspection.action
+#)
+
+## Generate added messages and services with any dependencies listed here
+generate_messages(
+	DEPENDENCIES
+#		std_msgs  # Or other packages containing msgs
+#		actionlib_msgs
+		moveit_msgs
+)
+
+###########
+## Build ##
+###########
 
 if("${qt_gui_cpp_USE_QT_MAJOR_VERSION} " STREQUAL "5 ")
 	find_package(Qt5Widgets REQUIRED)
