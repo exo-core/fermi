@@ -165,11 +165,12 @@ namespace moveit_cartesian_plan_plugin
 		ROS_DEBUG_STREAM("AddWayPoint::swapWaypoints("<<index1<<","<<index2<<")");
 
 		Waypoint tmp = waypoints_[index1] ;
-		waypoints_[index1] = waypoints_[index2];
-		waypoints_[index2] = tmp ;
 
-		pointPoseUpdatedRViz(waypoints_[index1], index1);
-		pointPoseUpdatedRViz(waypoints_[index2], index2);
+		waypointUpdated(waypoints_[index2], index1);
+		waypointUpdated(tmp, index2);
+
+		Q_EMIT pointPoseUpdatedRViz(waypoints_[index1], index1);
+		Q_EMIT pointPoseUpdatedRViz(waypoints_[index2], index2);
 	}
 
 	void AddWayPoint::addPointFromUI(const Waypoint point_pos) {
