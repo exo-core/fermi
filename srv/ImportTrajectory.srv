@@ -1,6 +1,7 @@
 # This service allows to load a trajectory from disk
 
 # File to read from
+# use package://package_name/file.json to load from a specific ROS package
 string file_name
 
 ---

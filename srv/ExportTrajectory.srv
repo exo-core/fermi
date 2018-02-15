@@ -4,6 +4,7 @@
 moveit_msgs/RobotTrajectory trajectory
 
 # File to write to
+# use package://package_name/file.json to save in a specific ROS package
 string file_name
 
 # overwrite existing files
