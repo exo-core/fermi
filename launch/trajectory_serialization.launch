@@ -1,0 +1,3 @@
+<launch>
+    <node name="trajectory_serialization" pkg="moveit_cartesian_plan_plugin" type="trajectory_serialization.py" output="screen" />
+</launch>
