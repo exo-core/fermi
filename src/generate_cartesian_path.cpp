@@ -239,7 +239,7 @@ void GenerateCartesianPath::initRvizDone()
 
 	Q_EMIT sendCartPlanGroup(group_names_);
 
-	joint_state_sub_ = nh_.subscribe("/iiwa/joint_states", 10, &GenerateCartesianPath::processMessage, this);
+	timer_ = nh_.createTimer(ros::Duration(0.05), &GenerateCartesianPath::timerCallback, this, false);
 }
 
 void GenerateCartesianPath::moveToHome()
@@ -302,8 +302,8 @@ void GenerateCartesianPath::emitCurrentState() {
 	}
 }
 
-void GenerateCartesianPath::processMessage( const sensor_msgs::JointState::ConstPtr& msg ) {
-	//ROS_DEBUG("GenerateCartesianPath::processMessage");
+void GenerateCartesianPath::timerCallback(const ros::TimerEvent&) {
+	//ROS_DEBUG("GenerateCartesianPath::timerCallback");
 
 	emitCurrentState();
 }

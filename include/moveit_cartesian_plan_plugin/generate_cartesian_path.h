@@ -125,11 +125,11 @@ class GenerateCartesianPath: public QObject
 		bool AVOID_COLLISIONS_;
 	private:
 		ros::NodeHandle nh_;
-		ros::Subscriber joint_state_sub_;
+		ros::Timer timer_ ;
 		tf::TransformListener listener;
 
-		/// Update current pose display if the arm moves
-		void processMessage( const sensor_msgs::JointState::ConstPtr& msg );
+		/// Update current pose display
+		void timerCallback(const ros::TimerEvent&);
 		void emitCurrentState() ;
 };
 
