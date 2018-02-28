@@ -735,7 +735,7 @@ namespace moveit_cartesian_plan_plugin
 			points_vec.push_back(RAD2DEG(rz));
 
 			out << YAML::Key << "name";
-			out << YAML::Value << (i+1);
+			out << YAML::Value << waypoints_[i].name_;
 			out << YAML::Key << "point";
 			out << YAML::Value << YAML::Flow << points_vec;
 			out << YAML::EndMap;
