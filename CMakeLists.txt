@@ -181,7 +181,7 @@ install(
 
 install(
 	PROGRAMS
-		scripts/moveit_cartesian_plan_plugin
+		scripts/trajectory_serialization.py
 	DESTINATION
 		${CATKIN_PACKAGE_BIN_DESTINATION}
 )
